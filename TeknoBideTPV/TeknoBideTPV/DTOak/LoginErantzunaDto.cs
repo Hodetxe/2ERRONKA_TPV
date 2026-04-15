@@ -1,10 +1,3 @@
-﻿using _1Erronka_API.DTOak;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace TeknoBideTPV.DTOak
 {
     public class LoginErantzunaDto

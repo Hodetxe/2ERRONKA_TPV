@@ -9,8 +9,8 @@ namespace TeknoBideTPV.Zerbitzuak
 {
     public class ApiZerbitzua
     {
-        public static readonly string BASE_URL = "http://192.168.1.112:5000/";
-        //public static readonly string BASE_URL = "http://localhost:5000/";
+        //public static readonly string BASE_URL = "http://192.168.1.112:5000/";
+        public static readonly string BASE_URL = "http://localhost:5000/";
 
         private static readonly HttpClient _httpClient = new HttpClient
         {
@@ -19,13 +19,45 @@ namespace TeknoBideTPV.Zerbitzuak
 
         public async Task<LoginErantzunaDto?> LoginAsync(int langileKodea, string pasahitza)
         {
-            var request = new { Langile_kodea = langileKodea, Pasahitza = pasahitza };
-            var response = await _httpClient.PostAsJsonAsync("api/login", request);
+            try
+            {
+                var request = new { Langile_kodea = langileKodea, Pasahitza = pasahitza };
+                var response = await _httpClient.PostAsJsonAsync("api/login", request);
 
-            if (!response.IsSuccessStatusCode)
+                try
+                {
+                    var erantzuna = await response.Content.ReadFromJsonAsync<LoginErantzunaDto>();
+                    if (erantzuna != null)
+                    {
+                        // Si el API devuelve un DTO, incluso con error, lo usamos
+                        if (!response.IsSuccessStatusCode && string.IsNullOrEmpty(erantzuna.Message))
+                        {
+                            erantzuna.Message = $"Zerbitzariaren errorea: {(int)response.StatusCode}";
+                        }
+                        return erantzuna;
+                    }
+                }
+                catch
+                {
+                    
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new LoginErantzunaDto { Ok = false, Message = $"Zerbitzariaren errorea: {(int)response.StatusCode}" };
+                }
+
                 return null;
-
-            return await response.Content.ReadFromJsonAsync<LoginErantzunaDto>();
+            }
+            catch (HttpRequestException)
+            {
+                // Error de conexión (API caída, etc.)
+                return new LoginErantzunaDto { Ok = false, Message = $"Ezin izan da API-arekin konektatu ({BASE_URL}). Ziurtatu API-a martxan dagoela." };
+            }
+            catch (Exception ex)
+            {
+                return new LoginErantzunaDto { Ok = false, Message = $"Ustekabeko errorea: {ex.Message}" };
+            }
         }
 
         public async Task<List<ProduktuaDto>> LortuProduktuakAsync()
@@ -39,7 +71,15 @@ namespace TeknoBideTPV.Zerbitzuak
             var response = await _httpClient.PostAsJsonAsync("api/eskariak", dto);
 
             if (!response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<EskariaSortuErantzunaDto>();
+                    if (errorResponse != null) return errorResponse;
+                }
+                catch { }
                 return null;
+            }
 
             return await response.Content.ReadFromJsonAsync<EskariaSortuErantzunaDto>();
         }

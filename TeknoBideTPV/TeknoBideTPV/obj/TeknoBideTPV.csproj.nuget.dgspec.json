@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\1_ERRONKA(2MG)\\2MG3_1Erronka_TPVaplikazioa\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj": {}
+    "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj": {}
   },
   "projects": {
-    "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\1_ERRONKA(2MG)\\2MG3_1Erronka_TPVaplikazioa\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj": {
+    "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\1_ERRONKA(2MG)\\2MG3_1Erronka_TPVaplikazioa\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj",
+        "projectUniqueName": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj",
         "projectName": "TeknoBideTPV",
-        "projectPath": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\1_ERRONKA(2MG)\\2MG3_1Erronka_TPVaplikazioa\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj",
+        "projectPath": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\TeknoBideTPV.csproj",
         "packagesPath": "C:\\Users\\hodei\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\1_ERRONKA(2MG)\\2MG3_1Erronka_TPVaplikazioa\\TeknoBideTPV\\TeknoBideTPV\\obj\\",
+        "outputPath": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -88,7 +88,7 @@
             // 
             // img_Logoa
             // 
-            img_Logoa.Image = (Image)resources.GetObject("img_Logoa.Image");
+            img_Logoa.Image = null;
             img_Logoa.Location = new Point(1211, 230);
             img_Logoa.Name = "img_Logoa";
             img_Logoa.Size = new Size(512, 481);

@@ -1,0 +1,580 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Erronka1Api</name>
+    </assembly>
+    <members>
+        <member name="T:_1Erronka_API.Controllers.ErreserbakController">
+            <summary>
+            Erreserbak kudeatzeko kontroladorea.
+            </summary>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ErreserbakController.GetAll">
+            <summary>
+            Erreserba guztiak lortzen ditu.
+            </summary>
+            <returns>Erreserba guztien zerrenda DTO formatuan.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ErreserbakController.Sortu(_1Erronka_API.DTOak.ErreserbaSortuDto)">
+            <summary>
+            Erreserba berri bat sortzen du.
+            </summary>
+            <param name="dto">Sortu beharreko erreserbaren datuak.</param>
+            <returns>Sortutako erreserbaren IDa.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ErreserbakController.Update(System.Int32,_1Erronka_API.DTOak.ErreserbaSortuDto)">
+            <summary>
+            Erreserba bat eguneratzen du.
+            </summary>
+            <param name="id">Eguneratu nahi den erreserbaren IDa.</param>
+            <param name="dto">Erreserbaren datu berriak.</param>
+            <returns>Emaitza HTTP 200 (OK) edo 404 (NotFound).</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ErreserbakController.Ordaindu(_1Erronka_API.DTOak.ErreserbaOrdainduDto)">
+            <summary>
+            Erreserba bat ordaintzen du eta faktura sortzen du.
+            </summary>
+            <param name="dto">Ordainketaren datuak.</param>
+            <returns>HTTP 200 (OK) edo 404 (NotFound).</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ErreserbakController.Delete(System.Int32)">
+            <summary>
+            Erreserba bat ezabatzen du.
+            </summary>
+            <param name="id">Ezabatu nahi den erreserbaren IDa.</param>
+            <returns>HTTP 200 (OK) edo 400 (BadRequest).</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ErreserbakController.DeskargatuTicket(System.Int32)">
+            <summary>
+            Erreserba baten tiketa (PDF) deskargatzen du.
+            </summary>
+            <param name="id">Erreserbaren IDa.</param>
+            <returns>PDF fitxategia.</returns>
+        </member>
+        <member name="T:_1Erronka_API.Controllers.EskariakController">
+            <summary>
+            Eskariak kudeatzeko kontroladorea.
+            </summary>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.EskariakController.Sortu(_1Erronka_API.DTOak.EskariaSortuDto)">
+            <summary>
+            Eskaria berri bat sortzen du.
+            </summary>
+            <param name="dto">Eskariaren datuak.</param>
+            <returns>Sortutako eskariaren informazioa edo errore mezua.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.EskariakController.Eguneratu(System.Int32,_1Erronka_API.DTOak.EskariaSortuDto)">
+            <summary>
+            Eskaria bat eguneratzen du.
+            </summary>
+            <param name="id">Eskariaren IDa.</param>
+            <param name="dto">Eskariaren datu berriak.</param>
+            <returns>True ondo badoa, bestela errorea.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.EskariakController.Ezabatu(System.Int32)">
+            <summary>
+            Eskaria bat ezabatzen du.
+            </summary>
+            <param name="id">Eskariaren IDa.</param>
+            <returns>True ondo badoa, bestela errorea.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.EskariakController.GetEskaria(System.Int32)">
+            <summary>
+            Eskaria baten xehetasunak lortzen ditu.
+            </summary>
+            <param name="id">Eskariaren IDa.</param>
+            <returns>Eskariaren informazioa DTO formatuan.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.EskariakController.GetEskariakByErreserba(System.Int32)">
+            <summary>
+            Erreserba baten eskari guztiak lortzen ditu.
+            </summary>
+            <param name="erreserbaId">Erreserbaren IDa.</param>
+            <returns>Erreserbaren eskarien zerrenda.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.EskariakController.GetEskariak">
+            <summary>
+            Eskaria guztiak lortzen ditu.
+            </summary>
+            <returns>Eskaria guztien zerrenda.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.EskariakController.GetEskariakByEgoera(System.String)">
+            <summary>
+            Egoera zehatz batean dauden eskariak lortzen ditu.
+            </summary>
+            <param name="egoera">Egoera (Adibidez: "Prestatzen").</param>
+            <returns>Egoera horretan dauden eskarien zerrenda.</returns>
+        </member>
+        <member name="T:_1Erronka_API.Controllers.LoginController">
+            <summary>
+            Erabiltzaileen saio-hasiera kudeatzen duen kontroladorea.
+            </summary>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.LoginController.Login(_1Erronka_API.Controllers.LoginRequest)">
+            <summary>
+            Erabiltzailearen saioa hasten du.
+            </summary>
+            <param name="request">Saio-hasierako eskaeraren datuak.</param>
+            <returns>Saio-hasieraren emaitza eta, arrakasta izanez gero, erabiltzailearen datuak.</returns>
+        </member>
+        <member name="T:_1Erronka_API.Controllers.LoginRequest">
+            <summary>
+            Saio-hasierako eskaeraren datuak.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.Controllers.LoginRequest.Langile_kodea">
+            <summary>
+            Langilearen kodea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.Controllers.LoginRequest.Pasahitza">
+            <summary>
+            Langilearen pasahitza.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.Controllers.LoginErantzuna">
+            <summary>
+            Saio-hasieraren erantzuna.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.Controllers.LoginErantzuna.Ok">
+            <summary>
+            Erantzuna zuzena den edo ez.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.Controllers.LoginErantzuna.Code">
+            <summary>
+            Erantzunaren kodea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.Controllers.LoginErantzuna.Message">
+            <summary>
+            Erantzunaren mezua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.Controllers.LoginErantzuna.Data">
+            <summary>
+            Langilearen datuak (aukerakoa).
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.Controllers.MahaiakController">
+            <summary>
+            Mahaien kudeaketaz arduratzen den kontroladorea.
+            </summary>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.MahaiakController.GetAll">
+            <summary>
+            Mahai guztiak lortzen ditu.
+            </summary>
+            <returns>Mahai guztien zerrenda DTO formatuan.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.MahaiakController.Delete(System.Int32)">
+            <summary>
+            Mahai bat ezabatzen du.
+            </summary>
+            <param name="id">Ezabatu beharreko mahaiaren identifikadorea.</param>
+            <returns>Eragiketaren emaitza.</returns>
+        </member>
+        <member name="T:_1Erronka_API.Controllers.OsagaiakController">
+            <summary>
+            Osagaiak kudeatzeko kontroladorea.
+            </summary>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.OsagaiakController.GetAll">
+            <summary>
+            Osagai guztiak lortzen ditu.
+            </summary>
+            <returns>Osagai guztien zerrenda DTO formatuan.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.OsagaiakController.Get(System.Int32)">
+            <summary>
+            Osagai zehatz bat lortzen du bere IDaren bidez.
+            </summary>
+            <param name="id">Osagaiaren identifikadorea.</param>
+            <returns>Osagaiaren datuak edo NotFound mezua.</returns>
+        </member>
+        <member name="T:_1Erronka_API.Controllers.ProduktuakController">
+            <summary>
+            Produktuak kudeatzeko kontroladorea.
+            </summary>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ProduktuakController.GetAll">
+            <summary>
+            Produktu guztiak lortzen ditu.
+            </summary>
+            <returns>Produktu guztien zerrenda DTO formatuan.</returns>
+        </member>
+        <member name="M:_1Erronka_API.Controllers.ProduktuakController.Get(System.Int32)">
+            <summary>
+            Produktu zehatz bat lortzen du bere IDaren bidez.
+            </summary>
+            <param name="id">Produktuaren identifikadorea.</param>
+            <returns>Produktuaren datuak edo NotFound mezua.</returns>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.ErreserbaDto">
+            <summary>
+            Erreserbaren datuak transferitzeko objektua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.Id">
+            <summary>
+            Erreserbaren identifikadorea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.BezeroIzena">
+            <summary>
+            Bezeroaren izena.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.Telefonoa">
+            <summary>
+            Bezeroaren telefono zenbakia.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.PertsonaKopurua">
+            <summary>
+            Erreserbarako pertsona kopurua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.EgunaOrdua">
+            <summary>
+            Erreserbaren data eta ordua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.PrezioTotala">
+            <summary>
+            Erreserbaren prezio totala.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.Ordainduta">
+            <summary>
+            Erreserba ordainduta dagoen edo ez (1: Bai, 0: Ez).
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.FakturaRuta">
+            <summary>
+            Sortutako fakturaren fitxategi ruta.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.LangileaId">
+            <summary>
+            Erreserba kudeatu duen langilearen IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.LangileaIzena">
+            <summary>
+            Erreserba kudeatu duen langilearen izena.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaDto.MahaiakId">
+            <summary>
+            Erreserba hau dagokion mahaiaren IDa.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.ErreserbaSortuDto">
+            <summary>
+            Erreserba berri bat sortzeko edo eguneratzeko erabiltzen den DTOa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.BezeroIzena">
+            <summary>
+            Bezeroaren izena.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.Telefonoa">
+            <summary>
+            Bezeroaren telefono zenbakia.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.PertsonaKopurua">
+            <summary>
+            Pertsona kopurua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.EgunaOrdua">
+            <summary>
+            Erreserbaren data eta ordua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.PrezioTotala">
+            <summary>
+            Prezio totala (hasieran 0 izan daiteke).
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.FakturaRuta">
+            <summary>
+            Fakturaren ruta (aukerakoa).
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.LangileaId">
+            <summary>
+            Langilearen IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaSortuDto.MahaiakId">
+            <summary>
+            Mahaiaren IDa.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.ErreserbaOrdainduDto">
+            <summary>
+            Erreserba bat ordaintzeko erabiltzen den datu egitura.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaOrdainduDto.ErreserbaId">
+            <summary>
+            Ordaindu nahi den erreserbaren IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaOrdainduDto.Guztira">
+            <summary>
+            Ordaindu beharreko guztizko kopurua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaOrdainduDto.Jasotakoa">
+            <summary>
+            Bezeroak emandako diru kopurua (eskudirutan bada).
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaOrdainduDto.Itzulia">
+            <summary>
+            Bezeroari itzuli beharreko diru kopurua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaOrdainduDto.LangileaId">
+            <summary>
+            Ordainketa kudeatzen duen langilearen IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ErreserbaOrdainduDto.OrdainketaModua">
+            <summary>
+            Ordainketa modua (Adibidez: "Eskudirua", "Txartela").
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.EskariaDto">
+            <summary>
+            Eskariaren informazioa gordetzeko DTOa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaDto.Id">
+            <summary>
+            Eskariaren identifikadorea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaDto.Prezioa">
+            <summary>
+            Eskariaren prezio totala.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaDto.Egoera">
+            <summary>
+            Eskariaren egoera (Adibidez: "Prestatzen", "Zerbitzatuta").
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaDto.ErreserbaId">
+            <summary>
+            Eskaria dagokion erreserbaren IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaDto.MahaiaZenbakia">
+            <summary>
+            Mahaiaren zenbakia.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaDto.Produktuak">
+            <summary>
+            Eskarian dauden produktuen zerrenda.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.EskariaSortuDto">
+            <summary>
+            Eskaria berri bat sortzeko erabiltzen den DTOa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaSortuDto.ErreserbaId">
+            <summary>
+            Erreserbaren IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaSortuDto.Prezioa">
+            <summary>
+            Eskariaren hasierako prezioa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaSortuDto.Egoera">
+            <summary>
+            Eskariaren hasierako egoera.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaSortuDto.Produktuak">
+            <summary>
+            Eskariari gehituko zaizkion produktuak.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.EskariaProduktuaDto">
+            <summary>
+            Eskaria bateko produktu baten xehetasunak.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaProduktuaDto.ProduktuaId">
+            <summary>
+            Produktuaren IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaProduktuaDto.ProduktuaIzena">
+            <summary>
+            Produktuaren izena.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaProduktuaDto.Kantitatea">
+            <summary>
+            Eskatutako kantitatea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaProduktuaDto.Prezioa">
+            <summary>
+            Produktuaren unitateko prezioa.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.EskariaProduktuaSortuDto">
+            <summary>
+            Eskaria sortzean produktu bat gehitzeko erabiltzen den DTOa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaProduktuaSortuDto.ProduktuaId">
+            <summary>
+            Produktuaren IDa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaProduktuaSortuDto.Kantitatea">
+            <summary>
+            Kantitatea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.EskariaProduktuaSortuDto.Prezioa">
+            <summary>
+            Unitateko prezioa.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.LangileaDto">
+            <summary>
+            Langilearen datuak transferitzeko objektua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.LangileaDto.Id">
+            <summary>
+            Langilearen identifikadorea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.LangileaDto.Izena">
+            <summary>
+            Langilearen izena.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.LangileaDto.Erabiltzaile_izena">
+            <summary>
+            Langilearen erabiltzaile izena sisteman.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.LangileaDto.Langile_kodea">
+            <summary>
+            Langilearen kodea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.LangileaDto.Rola_id">
+            <summary>
+            Langilearen rola (1: administratzailea, 2: zerbitzaria).
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.LangileaDto.Gerentea">
+            <summary>
+            Langilea administratzailea den edo ez (rola_id == 1).
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.MahaiaDto">
+            <summary>
+            Mahaiaren informazioa gordetzeko DTOa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.MahaiaDto.Id">
+            <summary>
+            Mahaiaren identifikadorea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.MahaiaDto.Zenbakia">
+            <summary>
+            Mahaiaren zenbakia.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.MahaiaDto.PertsonaKopurua">
+            <summary>
+            Mahaian sar daitekeen pertsona kopurua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.MahaiaDto.Kokapena">
+            <summary>
+            Mahaiaren kokapena (Adibidez: "Terraza", "Barruan").
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.ProduktuaDto">
+            <summary>
+            Produktu baten informazioa gordetzeko DTOa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ProduktuaDto.Id">
+            <summary>
+            Produktuaren identifikadorea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ProduktuaDto.Izena">
+            <summary>
+            Produktuaren izena.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ProduktuaDto.Prezioa">
+            <summary>
+            Produktuaren prezioa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ProduktuaDto.Mota">
+            <summary>
+            Produktu mota (Adibidez: "Edaria", "Platera").
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.ProduktuaDto.Stock">
+            <summary>
+            Produktuaren stock kopurua.
+            </summary>
+        </member>
+        <member name="T:_1Erronka_API.DTOak.OsagaiaDto">
+            <summary>
+            Osagai baten informazioa gordetzeko DTOa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.OsagaiaDto.Id">
+            <summary>
+            Osagaiaren identifikadorea.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.OsagaiaDto.Izena">
+            <summary>
+            Osagaiaren izena.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.OsagaiaDto.Prezioa">
+            <summary>
+            Osagaiaren prezioa.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.OsagaiaDto.Stock">
+            <summary>
+            Osagaiaren stock kopurua.
+            </summary>
+        </member>
+        <member name="P:_1Erronka_API.DTOak.OsagaiaDto.HornitzaileakId">
+            <summary>
+            Osagaiaren hornitzailearen IDa.
+            </summary>
+        </member>
+    </members>
+</doc>

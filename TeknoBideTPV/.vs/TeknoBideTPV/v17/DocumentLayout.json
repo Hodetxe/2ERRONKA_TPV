@@ -1,12 +1,53 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\1_ERRONKA(2MG)\\2MG3_1Erronka_TPVaplikazioa\\TeknoBideTPV\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF312A3-7EA8-4DC4-83A4-4E7C104DED0E}|TeknoBideTPV\\TeknoBideTPV.csproj|c:\\users\\hodei\\onedrive - goierri eskola\\escritorio\\2erronka_tpv\\teknobidetpv\\teknobidetpv\\zerbitzuak\\apizerbitzua.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF312A3-7EA8-4DC4-83A4-4E7C104DED0E}|TeknoBideTPV\\TeknoBideTPV.csproj|solutionrelative:teknobidetpv\\zerbitzuak\\apizerbitzua.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DF312A3-7EA8-4DC4-83A4-4E7C104DED0E}|TeknoBideTPV\\TeknoBideTPV.csproj|c:\\users\\hodei\\onedrive - goierri eskola\\escritorio\\2erronka_tpv\\teknobidetpv\\teknobidetpv\\dtoak\\loginerantzunadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DF312A3-7EA8-4DC4-83A4-4E7C104DED0E}|TeknoBideTPV\\TeknoBideTPV.csproj|solutionrelative:teknobidetpv\\dtoak\\loginerantzunadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LoginErantzunaDto.cs",
+              "DocumentMoniker": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\DTOak\\LoginErantzunaDto.cs",
+              "RelativeDocumentMoniker": "TeknoBideTPV\\DTOak\\LoginErantzunaDto.cs",
+              "ToolTip": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\DTOak\\LoginErantzunaDto.cs",
+              "RelativeToolTip": "TeknoBideTPV\\DTOak\\LoginErantzunaDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-13T11:35:13.719Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApiZerbitzua.cs",
+              "DocumentMoniker": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\Zerbitzuak\\ApiZerbitzua.cs",
+              "RelativeDocumentMoniker": "TeknoBideTPV\\Zerbitzuak\\ApiZerbitzua.cs",
+              "ToolTip": "C:\\Users\\hodei\\OneDrive - Goierri Eskola\\Escritorio\\2ERRONKA_TPV\\TeknoBideTPV\\TeknoBideTPV\\Zerbitzuak\\ApiZerbitzua.cs",
+              "RelativeToolTip": "TeknoBideTPV\\Zerbitzuak\\ApiZerbitzua.cs",
+              "ViewState": "AgIAAGIAAAAAAAAAAAAgwGoAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-23T15:36:40.226Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

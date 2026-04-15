@@ -1,13 +1,13 @@
-﻿namespace _1Erronka_API.DTOak
+namespace TeknoBideTPV.DTOak
 {
     public class LangileaDto
     {
-        public virtual int Id { get; set; }
-        public virtual string Izena { get; set; }
-        public virtual string Erabiltzaile_izena { get; set; }
-        public virtual int Langile_kodea { get; set; }
-        public virtual string Pasahitza { get; set; }
-        public virtual Boolean Gerentea { get; set; }
-        public virtual Boolean TpvSarrera { get; set; }
+        public int Id { get; set; }
+        public string Izena { get; set; } = "";
+        public string Abizena { get; set; } = "";
+        public string Erabiltzaile_izena { get; set; } = "";
+        public int Langile_kodea { get; set; }
+        public int Rola_id { get; set; }
+        public bool Gerentea { get; set; }
     }
 }
