@@ -1,4 +1,4 @@
-﻿namespace TeknoBideTPV.UI
+namespace TeknoBideTPV.UI
 {
     partial class ErreserbaAmaituForm
     {
@@ -52,7 +52,7 @@
             // 
             // headerControl_ErreserbaAmaitu
             // 
-            headerControl_ErreserbaAmaitu.BackColor = Color.FromArgb(255, 140, 0);
+            headerControl_ErreserbaAmaitu.BackColor = TPVEstiloa.Koloreak.Primary;
             headerControl_ErreserbaAmaitu.DataOrdua = "Data - Ordua";
             headerControl_ErreserbaAmaitu.Dock = DockStyle.Top;
             headerControl_ErreserbaAmaitu.Erabiltzailea = "Erabiltzailea";
@@ -67,9 +67,9 @@
             // footerControl_ErreserbaAmaitu
             // 
             footerControl_ErreserbaAmaitu.AtzeraTestua = "Atzera";
-            footerControl_ErreserbaAmaitu.BackColor = Color.FromArgb(245, 124, 0);
+            footerControl_ErreserbaAmaitu.BackColor = TPVEstiloa.Koloreak.Primary;
             footerControl_ErreserbaAmaitu.Dock = DockStyle.Bottom;
-            footerControl_ErreserbaAmaitu.ForeColor = Color.FromArgb(62, 39, 35);
+            footerControl_ErreserbaAmaitu.ForeColor = TPVEstiloa.Koloreak.TextTitle;
             footerControl_ErreserbaAmaitu.Location = new Point(0, 933);
             footerControl_ErreserbaAmaitu.Name = "footerControl_ErreserbaAmaitu";
             footerControl_ErreserbaAmaitu.Size = new Size(1902, 100);

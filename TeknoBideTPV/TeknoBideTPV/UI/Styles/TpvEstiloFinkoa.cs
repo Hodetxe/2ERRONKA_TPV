@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,11 +9,11 @@ namespace TeknoBideTPV.UI.Styles
     {
         public static class Koloreak
         {
-            public static Color Primary = Color.FromArgb(255, 140, 0); 
-            public static Color Secondary = Color.FromArgb(255, 200, 100);
-            public static Color Background = Color.FromArgb(253, 245, 230);
-            public static Color TextTitle = Color.FromArgb(50, 50, 50);
-            public static Color White = Color.White;
+            public static Color Primary = ColorTranslator.FromHtml("#6366F1");
+            public static Color Secondary = ColorTranslator.FromHtml("#4E8EF7");
+            public static Color Background = ColorTranslator.FromHtml("#F9FAFB");
+            public static Color TextTitle = ColorTranslator.FromHtml("#0F172A");
+            public static Color White = ColorTranslator.FromHtml("#FFFFFF");
         }
 
         private class KontrolInfo

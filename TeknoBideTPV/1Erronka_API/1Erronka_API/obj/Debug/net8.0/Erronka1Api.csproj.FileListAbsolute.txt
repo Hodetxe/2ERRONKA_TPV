@@ -168,4 +168,3 @@ c:\Users\hodei\OneDrive - Goierri Eskola\Escritorio\2ERRONKA_TPV\TeknoBideTPV\1E
 c:\Users\hodei\OneDrive - Goierri Eskola\Escritorio\2ERRONKA_TPV\TeknoBideTPV\1Erronka_API\1Erronka_API\obj\Debug\net8.0\Erronka1Api.pdb
 c:\Users\hodei\OneDrive - Goierri Eskola\Escritorio\2ERRONKA_TPV\TeknoBideTPV\1Erronka_API\1Erronka_API\obj\Debug\net8.0\Erronka1Api.genruntimeconfig.cache
 c:\Users\hodei\OneDrive - Goierri Eskola\Escritorio\2ERRONKA_TPV\TeknoBideTPV\1Erronka_API\1Erronka_API\obj\Debug\net8.0\ref\Erronka1Api.dll
-C:\Users\hodei\OneDrive - Goierri Eskola\Escritorio\2ERRONKA_TPV\TeknoBideTPV\1Erronka_API\1Erronka_API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

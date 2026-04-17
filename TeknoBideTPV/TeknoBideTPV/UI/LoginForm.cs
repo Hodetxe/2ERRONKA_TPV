@@ -38,8 +38,8 @@ namespace TeknoBideTPV.UI
             btn_Sartu.FlatStyle = FlatStyle.Flat;
             btn_Sartu.FlatAppearance.BorderSize = 0;
             
-            lbl_Erabiltzailea.ForeColor = TPVEstiloa.Koloreak.Text;
-            lbl_Pasahitza.ForeColor = TPVEstiloa.Koloreak.Text;
+            lbl_Erabiltzailea.ForeColor = TPVEstiloa.Koloreak.TextPrimary;
+            lbl_Pasahitza.ForeColor = TPVEstiloa.Koloreak.TextPrimary;
 
             txt_Erabiltzailea.BorderStyle = BorderStyle.FixedSingle;
             txt_Pasahitza.BorderStyle = BorderStyle.FixedSingle;
@@ -109,8 +109,8 @@ namespace TeknoBideTPV.UI
 
             using var brotxa = new LinearGradientBrush(
                 laukia,
-                TPVEstiloa.Koloreak.Background,
-                ColorTranslator.FromHtml("#FFE0B2"),
+                TPVEstiloa.Koloreak.LoginGradienteaArgia,
+                TPVEstiloa.Koloreak.LoginGradienteaIluna,
                 LinearGradientMode.Vertical);
             e.Graphics.FillRectangle(brotxa, laukia);
         }
@@ -145,13 +145,13 @@ namespace TeknoBideTPV.UI
             pnl_SaioHasieraTxartela = new PanelBiribildua
             {
                 BackColor = TPVEstiloa.Koloreak.White,
-                ErtzKolorea = ColorTranslator.FromHtml("#EEE3DA"),
+                ErtzKolorea = TPVEstiloa.Koloreak.Border,
                 ErtzLodiera = 1,
                 ErtzErradioa = 18,
                 ItzalKolorea = Color.FromArgb(28, 0, 0, 0),
                 ItzalDesplazamendua = 8,
                 ItzalLausotzea = 18,
-                AzentuKolorea = TPVEstiloa.Koloreak.PrimaryDark,
+                AzentuKolorea = TPVEstiloa.Koloreak.Primary,
                 AzentuZabalera = 12,
                 Padding = new Padding(42, 34, 36, 34)
             };
@@ -167,7 +167,7 @@ namespace TeknoBideTPV.UI
             lbl_Azpititulua = new Label
             {
                 AutoSize = true,
-                ForeColor = ColorTranslator.FromHtml("#6D4C41"),
+                ForeColor = TPVEstiloa.Koloreak.TextSecondary,
                 Font = new Font("Segoe UI", _azpitituluPuntuak, FontStyle.Regular, GraphicsUnit.Point, 0),
                 Text = "Sartu zure datuekin"
             };
@@ -207,8 +207,8 @@ namespace TeknoBideTPV.UI
 
             lbl_Erabiltzailea.Font = new Font("Segoe UI Semibold", _etiketaPuntuak, FontStyle.Bold, GraphicsUnit.Point, 0);
             lbl_Pasahitza.Font = new Font("Segoe UI Semibold", _etiketaPuntuak, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbl_Erabiltzailea.ForeColor = TPVEstiloa.Koloreak.TextTitle;
-            lbl_Pasahitza.ForeColor = TPVEstiloa.Koloreak.TextTitle;
+            lbl_Erabiltzailea.ForeColor = TPVEstiloa.Koloreak.TextPrimary;
+            lbl_Pasahitza.ForeColor = TPVEstiloa.Koloreak.TextPrimary;
 
             txt_Erabiltzailea.Font = new Font("Segoe UI", _sarreraPuntuak, FontStyle.Regular, GraphicsUnit.Point, 0);
             txt_Pasahitza.Font = new Font("Segoe UI", _sarreraPuntuak, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -228,8 +228,8 @@ namespace TeknoBideTPV.UI
             btn_Sartu.ForeColor = TPVEstiloa.Koloreak.White;
             btn_Sartu.FlatStyle = FlatStyle.Flat;
             btn_Sartu.FlatAppearance.BorderSize = 0;
-            btn_Sartu.FlatAppearance.MouseOverBackColor = TPVEstiloa.Koloreak.PrimaryDark;
-            btn_Sartu.FlatAppearance.MouseDownBackColor = TPVEstiloa.Koloreak.PrimaryDark;
+            btn_Sartu.FlatAppearance.MouseOverBackColor = TPVEstiloa.Koloreak.PrimaryHover;
+            btn_Sartu.FlatAppearance.MouseDownBackColor = TPVEstiloa.Koloreak.PrimaryHover;
         }
 
         private void LoginForm_Shown(object sender, EventArgs e)

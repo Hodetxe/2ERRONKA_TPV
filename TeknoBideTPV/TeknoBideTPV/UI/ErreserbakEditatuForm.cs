@@ -79,9 +79,14 @@ namespace TeknoBideTPV.UI
             if (cmb_Mahaiak.SelectedItem is MahaiaDto mahaia)
             {
                 nud_PertsonaKopurua.Maximum = mahaia.PertsonaKopurua;
+                nud_PertsonaKopurua.Minimum = 1;
                 if (nud_PertsonaKopurua.Value > mahaia.PertsonaKopurua)
                 {
                     nud_PertsonaKopurua.Value = mahaia.PertsonaKopurua;
+                }
+                if (nud_PertsonaKopurua.Value < nud_PertsonaKopurua.Minimum)
+                {
+                    nud_PertsonaKopurua.Value = nud_PertsonaKopurua.Minimum;
                 }
             }
         }
@@ -109,6 +114,7 @@ namespace TeknoBideTPV.UI
             nud_PertsonaKopurua.Left = txt_BezeroIzena.Left;
 
             DistribuzioaAjustatu();
+            PertsonaKopuruaSpinPrestatua();
         }
 
         private void EstilatuKontrolak()
@@ -133,6 +139,21 @@ namespace TeknoBideTPV.UI
             btn_Gorde.ForeColor = Color.White;
             btn_Gorde.FlatStyle = FlatStyle.Flat;
             btn_Gorde.FlatAppearance.BorderSize = 0;
+        }
+
+        private void PertsonaKopuruaSpinPrestatua()
+        {
+            nud_PertsonaKopurua.ReadOnly = true;
+            nud_PertsonaKopurua.Minimum = 1;
+            if (nud_PertsonaKopurua.Value < nud_PertsonaKopurua.Minimum)
+                nud_PertsonaKopurua.Value = nud_PertsonaKopurua.Minimum;
+
+            if (nud_PertsonaKopurua.Controls.Count > 0)
+            {
+                var botoiak = nud_PertsonaKopurua.Controls[0];
+                botoiak.Visible = true;
+                botoiak.Width = Math.Max(56, nud_PertsonaKopurua.Height);
+            }
         }
 
         private void DistribuzioaAjustatu()
@@ -160,6 +181,8 @@ namespace TeknoBideTPV.UI
 
             this.Resize -= Form_Resize_Reajuste;
             this.Resize += Form_Resize_Reajuste;
+
+            PertsonaKopuruaSpinPrestatua();
         }
 
         private void Form_Resize_Reajuste(object sender, EventArgs e)

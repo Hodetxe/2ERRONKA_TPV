@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
 using TeknoBideTPV.Zerbitzuak;
@@ -10,10 +12,15 @@ namespace TeknoBideTPV.Txata
     public partial class TxatPantaila : UserControl
     {
         private string erabiltzaileIzena = SesioZerbitzua.Izena + " txat-ean sartu da!";
-        private TcpClient erabiltzailea;
-        private StreamReader irakurlea;
-        private StreamWriter idazlea;
-        private Thread entzunHari;
+        private TcpClient? erabiltzailea;
+        private StreamReader? irakurlea;
+        private StreamWriter? idazlea;
+        private Thread? entzunHari;
+        private volatile bool _konektatuta;
+        private bool _konexioaHasita;
+        private readonly object _bidaliakLock = new object();
+        private readonly System.Collections.Generic.Dictionary<string, DateTime> _bidaliakBerriki = new System.Collections.Generic.Dictionary<string, DateTime>();
+        private readonly TimeSpan _bikoizketaLeihoa = TimeSpan.FromSeconds(5);
 
         public TxatPantaila(string erabiltzaileIzena)
         {
@@ -21,49 +28,91 @@ namespace TeknoBideTPV.Txata
             this.erabiltzaileIzena = erabiltzaileIzena;
 
             this.Resize += TxatPantaila_Resize;
+            this.Disposed += (_, __) => GarbituKonexioa();
         }
 
         public TxatPantaila()
         {
             InitializeComponent();
-            this.Load += TxatPantaila_Load;
-
             this.Resize += TxatPantaila_Resize;
+            MezuIdazlea.KeyDown += MezuIdazlea_KeyDown;
+            this.Disposed += (_, __) => GarbituKonexioa();
         }
 
-        private void TxatPantaila_Load(object sender, EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            konexioaKargatu();
+            base.OnLoad(e);
+            if (_konexioaHasita) return;
+            _konexioaHasita = true;
+            _ = KonexioaKargatuAsync();
         }
 
-        private void konexioaKargatu()
+        private async Task KonexioaKargatuAsync()
         {
             try
             {
-                erabiltzailea = new TcpClient("192.168.1.112", 5555);
+                var helbideak = new[]
+                {
+                    "127.0.0.1",
+                    "localhost",
+                    "192.168.1.112"
+                };
 
-                irakurlea = new StreamReader(erabiltzailea.GetStream());
-                idazlea = new StreamWriter(erabiltzailea.GetStream());
-                idazlea.AutoFlush = true;
+                TcpClient? konektatua = null;
+                foreach (var helbidea in helbideak)
+                {
+                    konektatua = await SaiatuKonektatzenAsync(helbidea, 5555, 2000);
+                    if (konektatua != null) break;
+                }
 
+                if (konektatua == null)
+                {
+                    MessageBox.Show("Ezin izan da txat zerbitzarira konektatu (5555).", "Txata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                erabiltzailea = konektatua;
+                var stream = erabiltzailea.GetStream();
+                irakurlea = new StreamReader(stream, Encoding.UTF8, leaveOpen: true);
+                idazlea = new StreamWriter(stream, Encoding.UTF8, leaveOpen: true)
+                {
+                    AutoFlush = true
+                };
+
+                _konektatuta = true;
                 idazlea.WriteLine(erabiltzaileIzena);
 
-                entzunHari = new Thread(entzunBuklea);
+                entzunHari = new Thread(EntzunBuklea);
                 entzunHari.IsBackground = true;
                 entzunHari.Start();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Errorea zerbitzarira konektatzean: " + ex.Message);
+                MessageBox.Show("Errorea zerbitzarira konektatzean: " + ex.Message, "Txata", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void entzunBuklea()
+        private static async Task<TcpClient?> SaiatuKonektatzenAsync(string helbidea, int portua, int timeoutMs)
+        {
+            try
+            {
+                var client = new TcpClient();
+                using var cts = new CancellationTokenSource(timeoutMs);
+                await client.ConnectAsync(helbidea, portua, cts.Token);
+                return client;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void EntzunBuklea()
         {
             try
             {
                 string lerroa;
-                while ((lerroa = irakurlea.ReadLine()) != null)
+                while (_konektatuta && irakurlea != null && (lerroa = irakurlea.ReadLine()) != null)
                 {
                     idatziMezua(lerroa);
                 }
@@ -76,7 +125,11 @@ namespace TeknoBideTPV.Txata
 
         private void idatziMezua(string msg)
         {
-            bool NireMezua = msg.StartsWith(SesioZerbitzua.Izena + ":");
+            msg = MezuaNormalizatu(msg);
+            bool NireMezua = msg.StartsWith(SesioZerbitzua.Izena + ":", StringComparison.Ordinal);
+
+            if (NireMezua && BidalitakoBikoizketaDa(msg))
+                return;
 
             if (MezuPantaila.InvokeRequired)
             {
@@ -95,8 +148,8 @@ namespace TeknoBideTPV.Txata
             string alineacion = NireMezua ? @"\qr" : @"\ql";
 
             Color fondo = NireMezua
-                ? ColorTranslator.FromHtml("#E65100")
-                : ColorTranslator.FromHtml("#F57C00");
+                ? System.Drawing.ColorTranslator.FromHtml("#E0E7FF")
+                : System.Drawing.ColorTranslator.FromHtml("#DBEAFE");
 
             string rtf = @"{\rtf1\ansi
 {\pard" + alineacion + @" 
@@ -114,8 +167,98 @@ namespace TeknoBideTPV.Txata
             string mezua = MezuIdazlea.Text.Trim();
             if (mezua == "") return;
 
-            idazlea.WriteLine(SesioZerbitzua.Izena + ":  " + mezua);
-            MezuIdazlea.Text = "";
+            if (!_konektatuta || idazlea == null)
+            {
+                MessageBox.Show("Ez zaude txatera konektatuta.", "Txata", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                var lerroa = MezuaNormalizatu(SesioZerbitzua.Izena + ": " + mezua);
+                MarkatuBidalia(lerroa);
+                idazlea.WriteLine(lerroa);
+                idatziMezua(lerroa);
+                MezuIdazlea.Text = "";
+            }
+            catch (Exception ex)
+            {
+                _konektatuta = false;
+                MessageBox.Show("Ezin izan da mezua bidali: " + ex.Message, "Txata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private static string MezuaNormalizatu(string msg)
+        {
+            msg = msg.Trim();
+            int idx = msg.IndexOf(':');
+            if (idx < 0)
+                return msg;
+
+            string prefix = msg.Substring(0, idx + 1);
+            string rest = msg.Substring(idx + 1).TrimStart();
+            return rest.Length == 0 ? prefix : prefix + " " + rest;
+        }
+
+        private void MarkatuBidalia(string msg)
+        {
+            lock (_bidaliakLock)
+            {
+                GarbituBidaliak();
+                _bidaliakBerriki[msg] = DateTime.UtcNow;
+            }
+        }
+
+        private bool BidalitakoBikoizketaDa(string msg)
+        {
+            lock (_bidaliakLock)
+            {
+                GarbituBidaliak();
+                if (_bidaliakBerriki.TryGetValue(msg, out var noiz))
+                {
+                    if (DateTime.UtcNow - noiz <= _bikoizketaLeihoa)
+                    {
+                        _bidaliakBerriki.Remove(msg);
+                        return true;
+                    }
+                    _bidaliakBerriki.Remove(msg);
+                }
+                return false;
+            }
+        }
+
+        private void GarbituBidaliak()
+        {
+            var orain = DateTime.UtcNow;
+            var kentzeko = new System.Collections.Generic.List<string>();
+            foreach (var kvp in _bidaliakBerriki)
+            {
+                if (orain - kvp.Value > _bikoizketaLeihoa)
+                    kentzeko.Add(kvp.Key);
+            }
+            foreach (var k in kentzeko)
+                _bidaliakBerriki.Remove(k);
+        }
+
+        private void MezuIdazlea_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && !e.Shift)
+            {
+                e.SuppressKeyPress = true;
+                BidaliBotoia.PerformClick();
+            }
+        }
+
+        private void GarbituKonexioa()
+        {
+            try
+            {
+                _konektatuta = false;
+                erabiltzailea?.Close();
+                irakurlea?.Dispose();
+                idazlea?.Dispose();
+            }
+            catch { }
         }
 
 

@@ -1,4 +1,4 @@
-﻿namespace TeknoBideTPV.UI
+﻿﻿namespace TeknoBideTPV.UI
 {
     partial class LoginForm
     {

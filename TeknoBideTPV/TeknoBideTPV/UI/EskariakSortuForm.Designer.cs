@@ -125,7 +125,7 @@ namespace TeknoBideTPV.UI
             // 
             // headerControl_EskariakSortu
             // 
-            headerControl_EskariakSortu.BackColor = Color.FromArgb(255, 140, 0);
+            headerControl_EskariakSortu.BackColor = TPVEstiloa.Koloreak.Primary;
             headerControl_EskariakSortu.DataOrdua = "Data - Ordua";
             headerControl_EskariakSortu.Dock = DockStyle.Top;
             headerControl_EskariakSortu.Erabiltzailea = "Erabiltzailea";
@@ -140,9 +140,9 @@ namespace TeknoBideTPV.UI
             // footerControl_EskariakSortu
             // 
             footerControl_EskariakSortu.AtzeraTestua = "Atzera";
-            footerControl_EskariakSortu.BackColor = Color.FromArgb(245, 124, 0);
+            footerControl_EskariakSortu.BackColor = TPVEstiloa.Koloreak.Primary;
             footerControl_EskariakSortu.Dock = DockStyle.Bottom;
-            footerControl_EskariakSortu.ForeColor = Color.FromArgb(62, 39, 35);
+            footerControl_EskariakSortu.ForeColor = TPVEstiloa.Koloreak.TextTitle;
             footerControl_EskariakSortu.Location = new Point(0, 933);
             footerControl_EskariakSortu.Name = "footerControl_EskariakSortu";
             footerControl_EskariakSortu.Size = new Size(1902, 100);

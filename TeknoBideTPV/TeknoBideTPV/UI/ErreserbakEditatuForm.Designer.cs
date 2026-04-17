@@ -72,7 +72,7 @@ namespace TeknoBideTPV.UI
             nud_PertsonaKopurua.Name = "nud_PertsonaKopurua";
             nud_PertsonaKopurua.Size = new Size(745, 61);
             nud_PertsonaKopurua.TabIndex = 5;
-            nud_PertsonaKopurua.Controls[0].Visible = false;
+            nud_PertsonaKopurua.Controls[0].Visible = true;
             // 
             // lbl_PertsonaKopurua
             // 
