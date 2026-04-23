@@ -17,6 +17,8 @@ namespace TeknoBideTPV.Zerbitzuak
             BaseAddress = new Uri(BASE_URL)
         };
 
+        public string? AzkenErrorea { get; private set; }
+
         public async Task<LoginErantzunaDto?> LoginAsync(int langileKodea, string pasahitza)
         {
             try
@@ -66,8 +68,21 @@ namespace TeknoBideTPV.Zerbitzuak
             return produktuak ?? new List<ProduktuaDto>();
         }
 
+        public async Task<bool> EguneratuProduktuaStockAsync(int produktuaId, int stock)
+        {
+            var dto = new ProduktuaDto
+            {
+                Id = produktuaId,
+                Stock = stock
+            };
+
+            var response = await _httpClient.PutAsJsonAsync($"api/produktuak/{produktuaId}", dto);
+            return response.IsSuccessStatusCode;
+        }
+
         public async Task<EskariaSortuErantzunaDto?> SortuEskariaAsync(EskariaSortuDto dto)
         {
+            AzkenErrorea = null;
             var response = await _httpClient.PostAsJsonAsync("api/eskariak", dto);
 
             if (!response.IsSuccessStatusCode)
@@ -78,6 +93,19 @@ namespace TeknoBideTPV.Zerbitzuak
                     if (errorResponse != null) return errorResponse;
                 }
                 catch { }
+
+                try
+                {
+                    var edukia = await response.Content.ReadAsStringAsync();
+                    AzkenErrorea = string.IsNullOrWhiteSpace(edukia)
+                        ? $"Zerbitzariaren errorea: {(int)response.StatusCode}"
+                        : edukia.Trim();
+                }
+                catch
+                {
+                    AzkenErrorea = $"Zerbitzariaren errorea: {(int)response.StatusCode}";
+                }
+
                 return null;
             }
 
@@ -143,7 +171,22 @@ namespace TeknoBideTPV.Zerbitzuak
 
         public async Task<bool> EguneratuEskariaAsync(int id, EskariaSortuDto dto)
         {
+            AzkenErrorea = null;
             var response = await _httpClient.PutAsJsonAsync($"api/eskariak/{id}", dto);
+            if (!response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var edukia = await response.Content.ReadAsStringAsync();
+                    AzkenErrorea = string.IsNullOrWhiteSpace(edukia)
+                        ? $"Zerbitzariaren errorea: {(int)response.StatusCode}"
+                        : edukia.Trim();
+                }
+                catch
+                {
+                    AzkenErrorea = $"Zerbitzariaren errorea: {(int)response.StatusCode}";
+                }
+            }
             return response.IsSuccessStatusCode;
         }
 

@@ -315,21 +315,7 @@ namespace TeknoBideTPV.UI
         private void EstilatuDataGridView()
         {
             dgv_ErreserbakIkusi.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv_ErreserbakIkusi.BackgroundColor = TPVEstiloa.Koloreak.Background;
-            dgv_ErreserbakIkusi.BorderStyle = BorderStyle.None;
-
-            dgv_ErreserbakIkusi.ColumnHeadersDefaultCellStyle.BackColor = TPVEstiloa.Koloreak.Primary;
-            dgv_ErreserbakIkusi.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgv_ErreserbakIkusi.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
-            dgv_ErreserbakIkusi.EnableHeadersVisualStyles = false;
-
-            dgv_ErreserbakIkusi.DefaultCellStyle.BackColor = Color.White;
-            dgv_ErreserbakIkusi.DefaultCellStyle.ForeColor = TPVEstiloa.Koloreak.TextTitle;
-            dgv_ErreserbakIkusi.DefaultCellStyle.Font = new Font("Segoe UI", 11);
-            dgv_ErreserbakIkusi.DefaultCellStyle.SelectionBackColor = TPVEstiloa.Koloreak.Secondary;
-            dgv_ErreserbakIkusi.DefaultCellStyle.SelectionForeColor = TPVEstiloa.Koloreak.TextTitle;
-
-            dgv_ErreserbakIkusi.RowTemplate.Height = 40;
+            TPVEstiloa.EstilatuDataGridView(dgv_ErreserbakIkusi);
 
             TPVEstiloaFinkoa.EguneratuKontrola(dgv_ErreserbakIkusi, this);
         }
@@ -353,6 +339,8 @@ namespace TeknoBideTPV.UI
                 btn.FlatStyle = FlatStyle.Flat;
                 btn.FlatAppearance.BorderSize = 0;
             }
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
         }
 
         private void btn_Bilatu_Click(object sender, EventArgs e)

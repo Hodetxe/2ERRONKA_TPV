@@ -15,10 +15,14 @@ namespace TeknoBideTPV.UI
     {
         private Form _AurrekoPantaila;
         private readonly ApiZerbitzua _api = new ApiZerbitzua();
+        private readonly OdooZerbitzua _odoo = new OdooZerbitzua();
         private int _langileaId;
 
         private ErreserbaDto? _hautatutakoErreserba;
         private double _guztira;
+        private double _jatorrizkoGuztira;
+        private bool _deskontuaGaldetuta;
+        private string? _deskontuKodea;
         private bool _eskudiruaAukeratuta;
 
         public ErreserbaAmaituForm(Form AurrekoPantaila)
@@ -297,15 +301,7 @@ namespace TeknoBideTPV.UI
             txt_JasoDenDirua.BackColor = Color.White;
             cmb_Erreserbak.BackColor = Color.White;
 
-            dgv_Eskariak.BackgroundColor = TPVEstiloa.Koloreak.Background;
-            dgv_Eskariak.BorderStyle = BorderStyle.None;
-            dgv_Eskariak.ColumnHeadersDefaultCellStyle.BackColor = TPVEstiloa.Koloreak.Primary;
-            dgv_Eskariak.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgv_Eskariak.EnableHeadersVisualStyles = false;
-            dgv_Eskariak.DefaultCellStyle.BackColor = Color.White;
-            dgv_Eskariak.DefaultCellStyle.ForeColor = TPVEstiloa.Koloreak.TextTitle;
-            dgv_Eskariak.DefaultCellStyle.SelectionBackColor = TPVEstiloa.Koloreak.Secondary;
-            dgv_Eskariak.DefaultCellStyle.SelectionForeColor = TPVEstiloa.Koloreak.TextTitle;
+            TPVEstiloa.EstilatuDataGridView(dgv_Eskariak);
 
             Button[] botoiak = { btn_Eskudirua, btn_Txartela, btn_Ordaindu };
             foreach (var btn in botoiak)
@@ -315,6 +311,8 @@ namespace TeknoBideTPV.UI
                 btn.FlatStyle = FlatStyle.Flat;
                 btn.FlatAppearance.BorderSize = 0;
             }
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
         }
 
         private async Task KargatuErreserbakAsync()
@@ -373,7 +371,10 @@ namespace TeknoBideTPV.UI
             dgv_Eskariak.RowHeadersVisible = false;
 
             double guztira = produktuak.Sum(p => p.Kantitatea * p.Prezioa);
+            _jatorrizkoGuztira = guztira;
             _guztira = guztira;
+            _deskontuaGaldetuta = false;
+            _deskontuKodea = null;
             lbl_Guztira.Text = _guztira.ToString("0.00 €");
 
             txt_JasoDenDirua.Text = "";
@@ -433,6 +434,8 @@ namespace TeknoBideTPV.UI
                 return;
             }
 
+            await DeskontuaAplikatuAsync();
+
             string ordainketaModua = _eskudiruaAukeratuta ? "Eskudirua" : "Txartela";
 
             double jasotakoa = 0;
@@ -484,6 +487,111 @@ namespace TeknoBideTPV.UI
 
             _AurrekoPantaila.Show();
             this.Close();
+        }
+
+        private async Task DeskontuaAplikatuAsync()
+        {
+            if (_deskontuaGaldetuta)
+                return;
+
+            _deskontuaGaldetuta = true;
+
+            var erantzuna = MessageBox.Show(
+                "Deskontu-kodea erabili nahi duzu?",
+                "Deskontua",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (erantzuna != DialogResult.Yes)
+                return;
+
+            var kodea = EskatuTestua("Deskontu-kodea", "Sartu deskontu-kodea:");
+            if (string.IsNullOrWhiteSpace(kodea))
+                return;
+
+            _deskontuKodea = kodea.Trim();
+
+            var emaitza = await _odoo.BalidatuDeskontuKodeaAsync(_deskontuKodea);
+            if (!emaitza.Ok)
+            {
+                MessageBox.Show(
+                    emaitza.Mezua,
+                    "Deskontua",
+                    MessageBoxButtons.OK,
+                    emaitza.KonfiguratuGabe ? MessageBoxIcon.Warning : MessageBoxIcon.Error);
+                _deskontuKodea = null;
+                return;
+            }
+
+            var ehunekoa = emaitza.Ehunekoa ?? 0;
+            var berria = _jatorrizkoGuztira * (1 - (ehunekoa / 100.0));
+            _guztira = Math.Round(berria, 2, MidpointRounding.AwayFromZero);
+            lbl_Guztira.Text = _guztira.ToString("0.00 €");
+
+            if (_eskudiruaAukeratuta)
+                KalkulatuItzulia();
+
+            MessageBox.Show(emaitza.Mezua, "Deskontua",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private static string? EskatuTestua(string titulua, string etiketa)
+        {
+            using var f = new Form();
+            f.Text = titulua;
+            f.FormBorderStyle = FormBorderStyle.FixedDialog;
+            f.StartPosition = FormStartPosition.CenterParent;
+            f.MaximizeBox = false;
+            f.MinimizeBox = false;
+            f.Width = 520;
+            f.Height = 190;
+
+            var lbl = new Label
+            {
+                Text = etiketa,
+                AutoSize = false,
+                Left = 16,
+                Top = 18,
+                Width = f.ClientSize.Width - 32,
+                Height = 24
+            };
+
+            var txt = new TextBox
+            {
+                Left = 16,
+                Top = 48,
+                Width = f.ClientSize.Width - 32
+            };
+
+            var btnOk = new Button
+            {
+                Text = "Onartu",
+                DialogResult = DialogResult.OK,
+                Left = f.ClientSize.Width - 16 - 200,
+                Top = 92,
+                Width = 90,
+                Height = 34
+            };
+
+            var btnCancel = new Button
+            {
+                Text = "Utzi",
+                DialogResult = DialogResult.Cancel,
+                Left = f.ClientSize.Width - 16 - 100,
+                Top = 92,
+                Width = 90,
+                Height = 34
+            };
+
+            f.Controls.Add(lbl);
+            f.Controls.Add(txt);
+            f.Controls.Add(btnOk);
+            f.Controls.Add(btnCancel);
+            f.AcceptButton = btnOk;
+            f.CancelButton = btnCancel;
+
+            var result = f.ShowDialog();
+            return result == DialogResult.OK ? txt.Text : null;
         }
     }
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Erronka1Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0c1cf458fed45b6c3984be8cfd11c63d20b922e0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34910e283182f63365d9d552456e744611012c73")]
 [assembly: System.Reflection.AssemblyProductAttribute("Erronka1Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Erronka1Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

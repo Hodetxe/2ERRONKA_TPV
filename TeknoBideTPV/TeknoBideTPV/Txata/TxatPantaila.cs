@@ -42,6 +42,7 @@ namespace TeknoBideTPV.Txata
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
             if (_konexioaHasita) return;
             _konexioaHasita = true;
             _ = KonexioaKargatuAsync();

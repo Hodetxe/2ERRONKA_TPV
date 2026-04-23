@@ -175,6 +175,8 @@ namespace TeknoBideTPV.UI
             btn_Garbitu.ForeColor = TPVEstiloa.Koloreak.TextTitle;
             btn_Garbitu.FlatStyle = FlatStyle.Flat;
             btn_Garbitu.FlatAppearance.BorderSize = 0;
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
         }
 
         private void PrestatuFooter()

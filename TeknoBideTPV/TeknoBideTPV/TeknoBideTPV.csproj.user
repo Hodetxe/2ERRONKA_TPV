@@ -29,6 +29,9 @@
     <Compile Update="UI\EskariakSortuForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="UI\InbentarioaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UI\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using TeknoBideTPV.UI.Controls;
 using TeknoBideTPV.UI.Styles;
@@ -9,6 +10,13 @@ namespace TeknoBideTPV.UI
 {
     public partial class MenuNagusia : Form
     {
+        private const int _eguraldiMinutuak = 60;
+        private static readonly EguraldiZerbitzua _eguraldiZerbitzua = new EguraldiZerbitzua(cacheDenbora: TimeSpan.FromMinutes(_eguraldiMinutuak));
+        private static EguraldiEmaitza? _eguraldiCache;
+        private static DateTime _eguraldiAzkenEguneraketa;
+        private System.Windows.Forms.Timer? _eguraldiTimer;
+        private System.Windows.Forms.Timer? _orduaTimer;
+
         public MenuNagusia()
         {
             InitializeComponent();
@@ -33,6 +41,8 @@ namespace TeknoBideTPV.UI
             PrestatuMenuBotoia(btn_MahaiakKudeatu, Properties.Resources.ico_mahaiak_kudeatu);
             PrestatuMenuBotoia(btn_Txostenak, Properties.Resources.ico_txostenak);
             PrestatuMenuBotoia(btn_Ezarpenak, Properties.Resources.ico_ezarpenak);
+
+            btn_Txostenak.Text = "EGURALDIA";
 
             //minimizatu maximizatu eta itxi botoiak ezkutatu
             this.ControlBox = false;
@@ -59,6 +69,82 @@ namespace TeknoBideTPV.UI
             headerControl_Menua.Titulo = "MENU NAGUSIA";
             headerControl_Menua.Erabiltzailea = SesioZerbitzua.Izena;
             headerControl_Menua.DataOrdua = DateTime.Now.ToString("dddd, dd MMMM yyyy - HH:mm");
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
+
+            OrduaTimerraPrestatu();
+            EguraldiTimerraPrestatu();
+            await EguraldiaBerrituAsync();
+        }
+
+        private void OrduaTimerraPrestatu()
+        {
+            if (_orduaTimer != null)
+                return;
+
+            _orduaTimer = new System.Windows.Forms.Timer();
+            _orduaTimer.Interval = 10 * 1000;
+            _orduaTimer.Tick += (_, __) =>
+            {
+                try
+                {
+                    headerControl_Menua.DataOrdua = DateTime.Now.ToString("dddd, dd MMMM yyyy - HH:mm");
+                }
+                catch
+                {
+                }
+            };
+            _orduaTimer.Start();
+
+            this.Disposed -= MenuNagusia_Disposed;
+            this.Disposed += MenuNagusia_Disposed;
+        }
+
+        private void EguraldiTimerraPrestatu()
+        {
+            if (_eguraldiTimer != null)
+                return;
+
+            _eguraldiTimer = new System.Windows.Forms.Timer();
+            _eguraldiTimer.Interval = 60 * 60 * 1000;
+            _eguraldiTimer.Tick += async (_, __) => await EguraldiaBerrituAsync();
+            _eguraldiTimer.Start();
+
+            this.Disposed -= MenuNagusia_Disposed;
+            this.Disposed += MenuNagusia_Disposed;
+        }
+
+        private void MenuNagusia_Disposed(object? sender, EventArgs e)
+        {
+            if (_eguraldiTimer != null)
+            {
+                _eguraldiTimer.Stop();
+                _eguraldiTimer.Dispose();
+                _eguraldiTimer = null;
+            }
+
+            if (_orduaTimer != null)
+            {
+                _orduaTimer.Stop();
+                _orduaTimer.Dispose();
+                _orduaTimer = null;
+            }
+        }
+
+        private async System.Threading.Tasks.Task EguraldiaBerrituAsync()
+        {
+            try
+            {
+                var emaitza = await _eguraldiZerbitzua.LortuEmaitzaAsync(true);
+                if (emaitza != null)
+                {
+                    _eguraldiCache = emaitza;
+                    _eguraldiAzkenEguneraketa = DateTime.Now;
+                }
+            }
+            catch
+            {
+            }
         }
 
         private void PrestatuFooter()
@@ -96,6 +182,7 @@ namespace TeknoBideTPV.UI
 
             btn.Resize += (s, e) => IkonoenTamainaAjustatu((Button)s);
             IkonoenTamainaAjustatu(btn);
+            TPVEstiloa.ProfesionalizatuKontrolak(btn);
         }
 
         private void IkonoenTamainaAjustatu(Button btn)
@@ -160,10 +247,124 @@ namespace TeknoBideTPV.UI
 
         private void btn_Txostenak_Click(object sender, EventArgs e)
         {
+            EguraldiaIrekiAsync();
+        }
+
+        private async void EguraldiaIrekiAsync()
+        {
+            try
+            {
+                btn_Txostenak.Enabled = false;
+
+                if (_eguraldiCache == null)
+                    await EguraldiaBerrituAsync();
+
+                var emaitza = _eguraldiCache;
+                if (emaitza == null)
+                {
+                    MessageBox.Show(
+                        "Ezin izan da eguraldiaren XML-a irakurri. Egiaztatu TPV_EGURALDI_XML aldagaia edo internet konexioa.",
+                        "Eguraldia",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                EguraldiAsteaErakutsi(emaitza);
+            }
+            catch
+            {
+            }
+            finally
+            {
+                btn_Txostenak.Enabled = true;
+            }
+        }
+
+        private void EguraldiAsteaErakutsi(EguraldiEmaitza emaitza)
+        {
+            using var f = new Form();
+            f.Text = "Eguraldia (astea)";
+            f.StartPosition = FormStartPosition.CenterParent;
+            f.Width = 900;
+            f.Height = 600;
+
+            string GoiburuaTestua()
+            {
+                var azken = _eguraldiAzkenEguneraketa == default ? DateTime.Now : _eguraldiAzkenEguneraketa;
+                var duela = DateTime.Now - azken;
+                var min = (int)Math.Max(0, Math.Floor(duela.TotalMinutes));
+                var hurrengoa = azken.AddMinutes(_eguraldiMinutuak);
+                return $"{emaitza.Info}\nAzken eguneraketa: {azken:yyyy-MM-dd HH:mm} (duela {min} min) | Hurrengoa: {hurrengoa:HH:mm}";
+            }
+
+            var lbl = new Label
+            {
+                Dock = DockStyle.Top,
+                Height = 80,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(16, 10, 16, 10),
+                Text = GoiburuaTestua()
+            };
+
+            var dgv = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                ReadOnly = true,
+                MultiSelect = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoGenerateColumns = true
+            };
+
+            var data = emaitza.Astea.Select(x => new
+            {
+                Eguna = EuskaraEguna(x.Data),
+                Data = x.Data.ToString("yyyy-MM-dd"),
+                Tenperatura = x.Tenperatura ?? "--",
+                Egoera = x.Egoera ?? "--",
+                Haizea = x.Haizea ?? "--"
+            }).ToList();
+
+            dgv.DataSource = data;
+            TPVEstiloa.EstilatuDataGridView(dgv);
+
+            f.Controls.Add(dgv);
+            f.Controls.Add(lbl);
+
+            TPVEstiloa.ProfesionalizatuKontrolak(f);
+            TPVEstiloa.ProfesionalizatuKontrolak(lbl);
+
+            var t = new System.Windows.Forms.Timer();
+            t.Interval = 1000;
+            t.Tick += (_, __) => { try { lbl.Text = GoiburuaTestua(); } catch { } };
+            f.FormClosed += (_, __) => { try { t.Stop(); t.Dispose(); } catch { } };
+            t.Start();
+
+            f.ShowDialog();
+        }
+
+        private static string EuskaraEguna(DateTime data)
+        {
+            return data.DayOfWeek switch
+            {
+                DayOfWeek.Monday => "Astelehena",
+                DayOfWeek.Tuesday => "Asteartea",
+                DayOfWeek.Wednesday => "Asteazkena",
+                DayOfWeek.Thursday => "Osteguna",
+                DayOfWeek.Friday => "Ostirala",
+                DayOfWeek.Saturday => "Larunbata",
+                DayOfWeek.Sunday => "Igandea",
+                _ => "Eguna"
+            };
         }
 
         private void btn_Ezarpenak_Click(object sender, EventArgs e)
         {
+            var inbentarioa = new InbentarioaForm(this);
+            this.Hide();
+            inbentarioa.Show();
         }
 
         private void btn_Logout_Click(object sender, EventArgs e)

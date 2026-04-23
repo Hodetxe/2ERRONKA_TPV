@@ -152,6 +152,8 @@ namespace TeknoBideTPV.UI
                 btn.Font = new Font("Segoe UI", 12, FontStyle.Bold);
             }
             btn_Guztiak.BackColor = TPVEstiloa.Koloreak.PrimaryDark;
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
         }
 
         private void EzarriEskariakLayout()
@@ -227,7 +229,8 @@ namespace TeknoBideTPV.UI
                 MaximumSize = new Size(380, 9999),
                 FlowDirection = FlowDirection.TopDown,
                 AutoScroll = true,
-                WrapContents = false
+                WrapContents = false,
+                BackColor = Color.White
             };
 
             foreach (var p in eskaria.Produktuak)
@@ -351,6 +354,7 @@ namespace TeknoBideTPV.UI
             pnl_Eskaria.Controls.Add(btn_Editatu);
 
             EguneratuPanelDiseinua(pnl_Eskaria, _currentCardWidth);
+            TPVEstiloa.ProfesionalizatuKontrolak(pnl_Eskaria);
 
             return pnl_Eskaria;
         }

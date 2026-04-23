@@ -50,6 +50,13 @@ namespace TeknoBideTPV.UI.Controls
             this.ForeColor = TPVEstiloa.Koloreak.TextTitle;
         }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            using var pen = new Pen(Color.FromArgb(60, 0, 0, 0), 1);
+            e.Graphics.DrawLine(pen, 0, 0, this.Width, 0);
+        }
+
         public string TxataTestua
         {
             get => btn_Txata.Text;
@@ -75,6 +82,9 @@ namespace TeknoBideTPV.UI.Controls
             var txat = new TxatPantaila(); 
             txat.Dock = DockStyle.Fill; 
             f.Controls.Add(txat); 
+            f.StartPosition = FormStartPosition.CenterParent;
+            TPVEstiloa.ProfesionalizatuKontrolak(f);
+            TPVEstiloa.ProfesionalizatuKontrolak(txat);
             f.ShowDialog(); 
             TxataClick?.Invoke(this, EventArgs.Empty);
         }

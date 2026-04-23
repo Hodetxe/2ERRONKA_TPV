@@ -26,6 +26,13 @@ namespace TeknoBideTPV.UI.Controls
             this.ForeColor = TPVEstiloaFinkoa.Koloreak.White;
         }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            using var pen = new Pen(Color.FromArgb(60, 0, 0, 0), 1);
+            e.Graphics.DrawLine(pen, 0, this.Height - 1, this.Width, this.Height - 1);
+        }
+
         public string Titulo
         {
             get => lbl_Izenburua.Text;

@@ -20,10 +20,11 @@ namespace TeknoBideTPV.UI
 
         private readonly Color KoloreNormala = TPVEstiloa.Koloreak.Primary;
         private readonly Color KoloreHover = TPVEstiloa.Koloreak.PrimaryDark;
-        private readonly Color KoloreAktiboa = TPVEstiloa.Koloreak.TextTitle;
+        private readonly Color KoloreAktiboa = TPVEstiloa.Koloreak.PrimaryHover;
 
         private Form _AurrekoPantaila;
         private EskariaDto _eskariaEditatzeko;
+        private string? _motaAukeratua;
 
         public EskariakSortuForm(Form AurrekoPantaila)
         {
@@ -52,20 +53,7 @@ namespace TeknoBideTPV.UI
             erreserbak = await api.ErreserbakLortuAsync();
             cbo_Erreserba.DataSource = erreserbak;
 
-            dgv_EskariaProduktua.EnableHeadersVisualStyles = false;
-            dgv_EskariaProduktua.ColumnHeadersDefaultCellStyle.BackColor = TPVEstiloa.Koloreak.Primary;
-            dgv_EskariaProduktua.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgv_EskariaProduktua.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-
-            dgv_EskariaProduktua.DefaultCellStyle.Font = new Font("Segoe UI", 10);
-            dgv_EskariaProduktua.DefaultCellStyle.BackColor = Color.White;
-            dgv_EskariaProduktua.DefaultCellStyle.ForeColor = Color.Black;
-            dgv_EskariaProduktua.DefaultCellStyle.SelectionBackColor = TPVEstiloa.Koloreak.PrimaryDark;
-            dgv_EskariaProduktua.DefaultCellStyle.SelectionForeColor = Color.White;
-
-            dgv_EskariaProduktua.AlternatingRowsDefaultCellStyle.BackColor = TPVEstiloa.Koloreak.Background;
-            dgv_EskariaProduktua.GridColor = Color.LightGray;
-            dgv_EskariaProduktua.RowHeadersVisible = false;
+            TPVEstiloa.EstilatuDataGridView(dgv_EskariaProduktua);
 
 
             cbo_Erreserba.DisplayMember = "BezeroIzena";
@@ -133,6 +121,8 @@ namespace TeknoBideTPV.UI
 
         private void DistribuzioaAjustatu()
         {
+            EzkerraldeaAjustatu();
+
             if (cbo_Erreserba.Left < lbl_AukeratutakoErreserba.Right + 20)
             {
                 cbo_Erreserba.Left = lbl_AukeratutakoErreserba.Right + 20;
@@ -168,6 +158,34 @@ namespace TeknoBideTPV.UI
             }
         }
 
+        private void EzkerraldeaAjustatu()
+        {
+            int ezkerMarjina = 34;
+            int goiMarjina = 15;
+            int tartea = 12;
+
+            int goia = headerControl_EskariakSortu.Height + goiMarjina;
+            int behekoMuga = footerControl_EskariakSortu.Top - goiMarjina;
+
+            int maxZabalera = dgv_EskariaProduktua.Left - ezkerMarjina - 40;
+            if (maxZabalera < 300) maxZabalera = 300;
+
+            flp_ProduktuMotak.Left = ezkerMarjina;
+            flp_ProduktuMotak.Top = goia;
+            flp_ProduktuMotak.Width = maxZabalera;
+            flp_ProduktuMotak.Height = 110;
+            flp_ProduktuMotak.WrapContents = false;
+            flp_ProduktuMotak.AutoScroll = true;
+
+            flp_Produktuak.Left = ezkerMarjina;
+            flp_Produktuak.Top = flp_ProduktuMotak.Bottom + tartea;
+            flp_Produktuak.Width = maxZabalera;
+
+            int flpAltuera = behekoMuga - flp_Produktuak.Top - tartea;
+            if (flpAltuera < 200) flpAltuera = 200;
+            flp_Produktuak.Height = flpAltuera;
+        }
+
         private void EstilatuKontrolak()
         {
             this.BackColor = TPVEstiloa.Koloreak.Background;
@@ -185,6 +203,8 @@ namespace TeknoBideTPV.UI
 
             cbo_Erreserba.BackColor = Color.White;
             txt_PrezioTotala.BackColor = Color.White;
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
         }
 
         private Button SortuTpvBotoia(string testua)
@@ -192,7 +212,9 @@ namespace TeknoBideTPV.UI
             var btn = new Button
             {
                 Text = testua,
-                AutoSize = true,
+                AutoSize = false,
+                Width = 160,
+                Height = 70,
                 BackColor = KoloreNormala,
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -202,6 +224,8 @@ namespace TeknoBideTPV.UI
             };
 
             btn.FlatAppearance.BorderSize = 0;
+            btn.FlatAppearance.MouseOverBackColor = KoloreHover;
+            btn.FlatAppearance.MouseDownBackColor = KoloreAktiboa;
 
             btn.MouseEnter += (s, e) =>
             {
@@ -215,8 +239,7 @@ namespace TeknoBideTPV.UI
                     btn.BackColor = KoloreNormala;
             };
 
-            TPVEstiloaFinkoa.EguneratuKontrola(btn, this);
-
+            TPVEstiloa.ProfesionalizatuKontrolak(btn);
             return btn;
         }
 
@@ -246,6 +269,7 @@ namespace TeknoBideTPV.UI
 
                 btnGuztiak.BackColor = KoloreAktiboa;
                 botoiAktiboa = btnGuztiak;
+                _motaAukeratua = null;
 
                 ErakutsiProduktuak(produktuak);
             };
@@ -263,6 +287,7 @@ namespace TeknoBideTPV.UI
 
                     btn.BackColor = KoloreAktiboa;
                     botoiAktiboa = btn;
+                    _motaAukeratua = mota;
 
                     var filtratuak = produktuak
                         .Where(p => p.Mota.Equals(mota, StringComparison.OrdinalIgnoreCase))
@@ -277,6 +302,23 @@ namespace TeknoBideTPV.UI
             btnGuztiak.PerformClick();
         }
 
+        private async Task ProduktuakBerrituAsync()
+        {
+            produktuak = await api.LortuProduktuakAsync();
+
+            if (string.IsNullOrWhiteSpace(_motaAukeratua))
+            {
+                ErakutsiProduktuak(produktuak);
+                return;
+            }
+
+            var filtratuak = produktuak
+                .Where(p => p.Mota != null && p.Mota.Equals(_motaAukeratua, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            ErakutsiProduktuak(filtratuak);
+        }
+
         private void ErakutsiProduktuak(List<ProduktuaDto> zerrenda)
         {
             flp_Produktuak.Controls.Clear();
@@ -287,17 +329,19 @@ namespace TeknoBideTPV.UI
                 {
                     Text = $"{p.Izena}\n{p.Prezioa:0.00}€",
                     Tag = p,
-                    Width = 150,
-                    Height = 80,
+                    Width = 180,
+                    Height = 110,
                     BackColor = TPVEstiloa.Koloreak.Baieztatu,
                     ForeColor = Color.White,
                     Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    Margin = new Padding(5)
+                    Margin = new Padding(6),
+                    FlatStyle = FlatStyle.Flat
                 };
 
+                btn.FlatAppearance.BorderSize = 0;
                 btn.Click += ProduktuaGehitu_Click;
+                TPVEstiloa.ProfesionalizatuKontrolak(btn);
                 flp_Produktuak.Controls.Add(btn);
-                TPVEstiloaFinkoa.EguneratuKontrola(btn, this);
             }
             EguneratuBotoiak();
         }
@@ -454,6 +498,7 @@ namespace TeknoBideTPV.UI
                 if (ondo)
                 {
                     MessageBox.Show("Eskaria ondo eguneratu da!", "Eskaria Eguneratuta", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await ProduktuakBerrituAsync();
                     if (_AurrekoPantaila is EskariakForm eskariakForm)
                     {
                         eskariakForm.BehartuEguneraketa();
@@ -463,7 +508,10 @@ namespace TeknoBideTPV.UI
                 }
                 else
                 {
-                    MessageBox.Show("Errorea eskaria eguneratzean.");
+                    var mezua = string.IsNullOrWhiteSpace(api.AzkenErrorea)
+                        ? "Errorea eskaria eguneratzean."
+                        : $"Errorea eskaria eguneratzean:\n{api.AzkenErrorea}";
+                    MessageBox.Show(mezua, "Errorea", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -491,11 +539,15 @@ namespace TeknoBideTPV.UI
                     else
                         dgv_EskariaProduktua.DataSource = null;
 
+                    await ProduktuakBerrituAsync();
                     EguneratuBotoiak();
                 }
                 else
                 {
-                    MessageBox.Show("Errorea eskaria sortzean.");
+                    var mezua = string.IsNullOrWhiteSpace(api.AzkenErrorea)
+                        ? "Errorea eskaria sortzean."
+                        : $"Errorea eskaria sortzean:\n{api.AzkenErrorea}";
+                    MessageBox.Show(mezua, "Errorea", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

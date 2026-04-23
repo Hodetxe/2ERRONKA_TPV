@@ -100,5 +100,57 @@ namespace _1Erronka_API.Testak
             // Assert
             Assert.IsType<NotFoundResult>(result);
         }
+
+        [Fact]
+        public void Update_ProduktuaExistitzenDa_StockEguneratu()
+        {
+            // Arrange
+            var produktua = new Produktua { Id = 5, Izena = "Ura", Prezioa = 1.0, Mota = "Bebida", Stock = 3 };
+            var repoMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaRepository>(MockBehavior.Strict, _dummyFactory);
+            repoMock.Setup(r => r.Get(5)).Returns(produktua);
+            repoMock.Setup(r => r.UpdateStock(5, 12));
+
+            var controller = CreateController(repoMock);
+
+            // Act
+            var result = controller.Update(5, new ProduktuaDto { Id = 5, Stock = 12 });
+
+            // Assert
+            Assert.IsType<OkResult>(result);
+            repoMock.Verify(r => r.UpdateStock(5, 12), Times.Once);
+        }
+
+        [Fact]
+        public void Update_ProduktuaEzDaExistitzen_NotFoundItzuli()
+        {
+            // Arrange
+            var repoMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaRepository>(MockBehavior.Strict, _dummyFactory);
+            repoMock.Setup(r => r.Get(5)).Returns((Produktua?)null);
+
+            var controller = CreateController(repoMock);
+
+            // Act
+            var result = controller.Update(5, new ProduktuaDto { Id = 5, Stock = 12 });
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public void Update_StockNegatiboa_BadRequestItzuli()
+        {
+            // Arrange
+            var produktua = new Produktua { Id = 5, Izena = "Ura", Prezioa = 1.0, Mota = "Bebida", Stock = 3 };
+            var repoMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaRepository>(MockBehavior.Strict, _dummyFactory);
+            repoMock.Setup(r => r.Get(5)).Returns(produktua);
+
+            var controller = CreateController(repoMock);
+
+            // Act
+            var result = controller.Update(5, new ProduktuaDto { Id = 5, Stock = -1 });
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
     }
 }

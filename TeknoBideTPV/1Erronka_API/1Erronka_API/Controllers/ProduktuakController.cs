@@ -61,5 +61,35 @@ namespace _1Erronka_API.Controllers
 
             return Ok(dto);
         }
+
+        /// <summary>
+        /// Produktu baten stock-a eguneratzen du.
+        /// </summary>
+        /// <param name="id">Produktuaren identifikadorea.</param>
+        /// <param name="dto">Produktuaren datuak (Stock erabiliko da).</param>
+        /// <returns>HTTP 200 (OK) edo 404 (NotFound).</returns>
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] ProduktuaDto dto)
+        {
+            if (dto == null)
+                return BadRequest("Datuak falta dira.");
+
+            var produktua = _repo.Get(id);
+            if (produktua == null)
+                return NotFound();
+
+            if (dto.Stock < 0)
+                return BadRequest("Stock-a ezin da negatiboa izan.");
+
+            try
+            {
+                _repo.UpdateStock(id, dto.Stock);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -139,6 +139,8 @@ namespace TeknoBideTPV.UI
             btn_Gorde.ForeColor = Color.White;
             btn_Gorde.FlatStyle = FlatStyle.Flat;
             btn_Gorde.FlatAppearance.BorderSize = 0;
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
         }
 
         private void PertsonaKopuruaSpinPrestatua()

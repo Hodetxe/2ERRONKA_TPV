@@ -54,6 +54,8 @@ namespace TeknoBideTPV.UI
 
             SaioHasieraTxartelaPrestatu();
             this.AcceptButton = btn_Sartu;
+
+            TPVEstiloa.ProfesionalizatuKontrolak(this);
         }
 
         private void LogoaKargatu()
