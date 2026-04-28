@@ -21,8 +21,9 @@ namespace TeknoBideTPV.UI
         private ErreserbaDto? _hautatutakoErreserba;
         private double _guztira;
         private double _jatorrizkoGuztira;
-        private bool _deskontuaGaldetuta;
         private string? _deskontuKodea;
+        private double? _deskontuEhunekoa;
+        private bool _deskontuaAplikatzen;
         private bool _eskudiruaAukeratuta;
 
         public ErreserbaAmaituForm(Form AurrekoPantaila)
@@ -63,10 +64,15 @@ namespace TeknoBideTPV.UI
             btn_Txartela.Click += btn_Txartela_Click;
             txt_JasoDenDirua.TextChanged += txt_JasoDenDirua_TextChanged;
             btn_Ordaindu.Click += btn_Ordaindu_Click;
+            btn_DeskontuaAplikatu.Click += btn_DeskontuaAplikatu_Click;
+            txt_DeskontuKodea.KeyDown += txt_DeskontuKodea_KeyDown;
 
             txt_JasoDenDirua.Enabled = false;
             lbl_Itzulia.Text = "0,00 €";
             lbl_Guztira.Text = "0,00 €";
+            lbl_DeskontuEgoera.Text = "";
+            lbl_DeskontuEgoera.AutoSize = false;
+            lbl_DeskontuEgoera.Height = 34;
 
             PrestatuFooter();
         }
@@ -185,6 +191,13 @@ namespace TeknoBideTPV.UI
             if (lbl_Guztira != null) lbl_Guztira.Height = lblTotalHeight;
             if (lbl_Itzulia != null) lbl_Itzulia.Height = lblTotalHeight; // Usamos la misma altura que Guztira para consistencia
             if (txt_JasoDenDirua != null) txt_JasoDenDirua.Height = txtHeight;
+            if (txt_DeskontuKodea != null) txt_DeskontuKodea.Height = 45;
+            if (btn_DeskontuaAplikatu != null) btn_DeskontuaAplikatu.Height = 52;
+            if (lbl_DeskontuEgoera != null)
+            {
+                lbl_DeskontuEgoera.AutoSize = false;
+                lbl_DeskontuEgoera.Height = 34;
+            }
             if (cmb_Erreserbak != null) cmb_Erreserbak.Height = 45; // Mantener altura combo
 
             if (cmb_Erreserbak != null) cmb_Erreserbak.Width = fullWidth;
@@ -201,6 +214,25 @@ namespace TeknoBideTPV.UI
             if (txt_JasoDenDirua != null)
                 txt_JasoDenDirua.Width = (int)(fullWidth * 0.5);
 
+            if (txt_DeskontuKodea != null && btn_DeskontuaAplikatu != null)
+            {
+                int buttonGap = 12;
+                int applyWidth = (int)(fullWidth * 0.35);
+                if (applyWidth < 160) applyWidth = 160;
+                if (applyWidth > 240) applyWidth = 240;
+
+                txt_DeskontuKodea.Left = innerMargin;
+                btn_DeskontuaAplikatu.Width = applyWidth;
+                txt_DeskontuKodea.Width = fullWidth - buttonGap - applyWidth;
+                btn_DeskontuaAplikatu.Left = txt_DeskontuKodea.Right + buttonGap;
+            }
+
+            if (lbl_DeskontuEgoera != null)
+            {
+                lbl_DeskontuEgoera.Left = innerMargin;
+                lbl_DeskontuEgoera.Width = fullWidth;
+            }
+
             if (btn_Ordaindu != null)
             {
                 int ordainduWidth = (int)(fullWidth * 0.6);
@@ -214,20 +246,21 @@ namespace TeknoBideTPV.UI
             int h1 = lbl_ErreserbaAukeratu.Height + cmb_Erreserbak.Height;
             // Grupo 2: Total
             int h2 = lbl_GuztiraIzenburua.Height + lbl_Guztira.Height;
-            // Grupo 3: Metodo
-            int h3 = lbl_OrdainketaMetodoa.Height + btn_Eskudirua.Height;
-            // Grupo 4: Recibido
-            int h4 = lbl_JasoDenDirua.Height + txt_JasoDenDirua.Height;
-            // Grupo 5: Vuelta
-            int h5 = lbl_ItzuliIzenburua.Height + lbl_Itzulia.Height;
-            // Grupo 6: Boton Pagar
-            int h6 = btn_Ordaindu.Height;
+            // Grupo 3: Deskontua
+            int h3 = lbl_DeskontuaIzenburua.Height + txt_DeskontuKodea.Height + lbl_DeskontuEgoera.Height;
+            // Grupo 4: Metodo
+            int h4 = lbl_OrdainketaMetodoa.Height + btn_Eskudirua.Height;
+            // Grupo 5: Recibido
+            int h5 = lbl_JasoDenDirua.Height + txt_JasoDenDirua.Height;
+            // Grupo 6: Vuelta
+            int h6 = lbl_ItzuliIzenburua.Height + lbl_Itzulia.Height;
+            // Grupo 7: Boton Pagar
+            int h7 = btn_Ordaindu.Height;
 
-            int totalContentHeight = h1 + h2 + h3 + h4 + h5 + h6;
+            int totalContentHeight = h1 + h2 + h3 + h4 + h5 + h6 + h7;
             int availableSpace = panelHeight - totalContentHeight;
             
-            // Distribuimos el espacio disponible entre los huecos (7 huecos: antes del 1, entre grupos, despues del 6)
-            int gapCount = 5; 
+            int gapCount = 6;
             // Permitir que el gap sea pequeño si hace falta, pero intentar mantener al menos 4px
             int gapSize = 6;
             
@@ -257,22 +290,29 @@ namespace TeknoBideTPV.UI
             currentY = lbl_Guztira.Bottom + gapSize;
 
             // Grupo 3
+            lbl_DeskontuaIzenburua.Top = currentY;
+            txt_DeskontuKodea.Top = lbl_DeskontuaIzenburua.Bottom;
+            btn_DeskontuaAplikatu.Top = txt_DeskontuKodea.Top - 2;
+            lbl_DeskontuEgoera.Top = txt_DeskontuKodea.Bottom + 2;
+            currentY = lbl_DeskontuEgoera.Bottom + gapSize;
+
+            // Grupo 4
             lbl_OrdainketaMetodoa.Top = currentY;
             btn_Eskudirua.Top = lbl_OrdainketaMetodoa.Bottom;
             btn_Txartela.Top = btn_Eskudirua.Top;
             currentY = btn_Eskudirua.Bottom + gapSize;
 
-            // Grupo 4
+            // Grupo 5
             lbl_JasoDenDirua.Top = currentY;
             txt_JasoDenDirua.Top = lbl_JasoDenDirua.Bottom;
             currentY = txt_JasoDenDirua.Bottom + gapSize;
 
-            // Grupo 5
+            // Grupo 6
             lbl_ItzuliIzenburua.Top = currentY;
             lbl_Itzulia.Top = lbl_ItzuliIzenburua.Bottom;
             currentY = lbl_Itzulia.Bottom + gapSize;
 
-            // Grupo 6
+            // Grupo 7
             btn_Ordaindu.Top = currentY;
         }
 
@@ -287,6 +327,8 @@ namespace TeknoBideTPV.UI
                 lbl_ErreserbaAukeratu,
                 lbl_GuztiraIzenburua,
                 lbl_Guztira,
+                lbl_DeskontuaIzenburua,
+                lbl_DeskontuEgoera,
                 lbl_OrdainketaMetodoa,
                 lbl_JasoDenDirua,
                 lbl_ItzuliIzenburua,
@@ -299,11 +341,12 @@ namespace TeknoBideTPV.UI
             }
 
             txt_JasoDenDirua.BackColor = Color.White;
+            txt_DeskontuKodea.BackColor = Color.White;
             cmb_Erreserbak.BackColor = Color.White;
 
             TPVEstiloa.EstilatuDataGridView(dgv_Eskariak);
 
-            Button[] botoiak = { btn_Eskudirua, btn_Txartela, btn_Ordaindu };
+            Button[] botoiak = { btn_Eskudirua, btn_Txartela, btn_Ordaindu, btn_DeskontuaAplikatu };
             foreach (var btn in botoiak)
             {
                 btn.BackColor = TPVEstiloa.Koloreak.Primary;
@@ -373,12 +416,14 @@ namespace TeknoBideTPV.UI
             double guztira = produktuak.Sum(p => p.Kantitatea * p.Prezioa);
             _jatorrizkoGuztira = guztira;
             _guztira = guztira;
-            _deskontuaGaldetuta = false;
             _deskontuKodea = null;
+            _deskontuEhunekoa = null;
             lbl_Guztira.Text = _guztira.ToString("0.00 €");
 
             txt_JasoDenDirua.Text = "";
             lbl_Itzulia.Text = "0,00 €";
+            txt_DeskontuKodea.Text = "";
+            lbl_DeskontuEgoera.Text = "";
         }
 
         private void btn_Eskudirua_Click(object sender, EventArgs e)
@@ -434,7 +479,17 @@ namespace TeknoBideTPV.UI
                 return;
             }
 
-            await DeskontuaAplikatuAsync();
+            var kodea = (txt_DeskontuKodea.Text ?? string.Empty).Trim();
+            if (kodea.Length > 0)
+            {
+                var okDeskontua = await AplikatuDeskontuaAsync(kodea);
+                if (!okDeskontua)
+                {
+                    MessageBox.Show(lbl_DeskontuEgoera.Text, "Deskontua",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
 
             string ordainketaModua = _eskudiruaAukeratuta ? "Eskudirua" : "Txartela";
 
@@ -489,109 +544,113 @@ namespace TeknoBideTPV.UI
             this.Close();
         }
 
-        private async Task DeskontuaAplikatuAsync()
+        private async void btn_DeskontuaAplikatu_Click(object? sender, EventArgs e)
         {
-            if (_deskontuaGaldetuta)
-                return;
-
-            _deskontuaGaldetuta = true;
-
-            var erantzuna = MessageBox.Show(
-                "Deskontu-kodea erabili nahi duzu?",
-                "Deskontua",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (erantzuna != DialogResult.Yes)
-                return;
-
-            var kodea = EskatuTestua("Deskontu-kodea", "Sartu deskontu-kodea:");
-            if (string.IsNullOrWhiteSpace(kodea))
-                return;
-
-            _deskontuKodea = kodea.Trim();
-
-            var emaitza = await _odoo.BalidatuDeskontuKodeaAsync(_deskontuKodea);
-            if (!emaitza.Ok)
+            var kodea = (txt_DeskontuKodea.Text ?? string.Empty).Trim();
+            if (kodea.Length == 0)
             {
-                MessageBox.Show(
-                    emaitza.Mezua,
-                    "Deskontua",
-                    MessageBoxButtons.OK,
-                    emaitza.KonfiguratuGabe ? MessageBoxIcon.Warning : MessageBoxIcon.Error);
-                _deskontuKodea = null;
+                GarbituDeskontua();
                 return;
             }
 
-            var ehunekoa = emaitza.Ehunekoa ?? 0;
-            var berria = _jatorrizkoGuztira * (1 - (ehunekoa / 100.0));
-            _guztira = Math.Round(berria, 2, MidpointRounding.AwayFromZero);
+            await AplikatuDeskontuaAsync(kodea);
+        }
+
+        private async void txt_DeskontuKodea_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+
+            var kodea = (txt_DeskontuKodea.Text ?? string.Empty).Trim();
+            if (kodea.Length == 0)
+            {
+                GarbituDeskontua();
+                return;
+            }
+
+            await AplikatuDeskontuaAsync(kodea);
+        }
+
+        private void GarbituDeskontua()
+        {
+            _deskontuKodea = null;
+            _deskontuEhunekoa = null;
+            _guztira = Math.Round(_jatorrizkoGuztira, 2, MidpointRounding.AwayFromZero);
             lbl_Guztira.Text = _guztira.ToString("0.00 €");
+            lbl_DeskontuEgoera.ForeColor = TPVEstiloa.Koloreak.TextTitle;
+            lbl_DeskontuEgoera.Text = "";
 
             if (_eskudiruaAukeratuta)
                 KalkulatuItzulia();
-
-            MessageBox.Show(emaitza.Mezua, "Deskontua",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private static string? EskatuTestua(string titulua, string etiketa)
+        private async Task<bool> AplikatuDeskontuaAsync(string kodea)
         {
-            using var f = new Form();
-            f.Text = titulua;
-            f.FormBorderStyle = FormBorderStyle.FixedDialog;
-            f.StartPosition = FormStartPosition.CenterParent;
-            f.MaximizeBox = false;
-            f.MinimizeBox = false;
-            f.Width = 520;
-            f.Height = 190;
+            if (_deskontuaAplikatzen)
+                return false;
 
-            var lbl = new Label
+            kodea = (kodea ?? string.Empty).Trim();
+            if (kodea.Length == 0)
             {
-                Text = etiketa,
-                AutoSize = false,
-                Left = 16,
-                Top = 18,
-                Width = f.ClientSize.Width - 32,
-                Height = 24
-            };
+                GarbituDeskontua();
+                return true;
+            }
 
-            var txt = new TextBox
+            if (_deskontuKodea != null &&
+                string.Equals(_deskontuKodea, kodea, StringComparison.OrdinalIgnoreCase) &&
+                _deskontuEhunekoa.HasValue)
             {
-                Left = 16,
-                Top = 48,
-                Width = f.ClientSize.Width - 32
-            };
+                lbl_DeskontuEgoera.ForeColor = Color.DarkGreen;
+                lbl_DeskontuEgoera.Text = $"Deskontua aplikatuta: -{_deskontuEhunekoa:0.##}%";
+                return true;
+            }
 
-            var btnOk = new Button
+            try
             {
-                Text = "Onartu",
-                DialogResult = DialogResult.OK,
-                Left = f.ClientSize.Width - 16 - 200,
-                Top = 92,
-                Width = 90,
-                Height = 34
-            };
+                _deskontuaAplikatzen = true;
+                btn_DeskontuaAplikatu.Enabled = false;
+                lbl_DeskontuEgoera.ForeColor = TPVEstiloa.Koloreak.TextTitle;
+                lbl_DeskontuEgoera.Text = "Balidatzen...";
 
-            var btnCancel = new Button
+                var emaitza = await _odoo.BalidatuDeskontuKodeaAsync(kodea);
+                if (!emaitza.Ok)
+                {
+                    _deskontuKodea = null;
+                    _deskontuEhunekoa = null;
+                    _guztira = Math.Round(_jatorrizkoGuztira, 2, MidpointRounding.AwayFromZero);
+                    lbl_Guztira.Text = _guztira.ToString("0.00 €");
+
+                    if (_eskudiruaAukeratuta)
+                        KalkulatuItzulia();
+
+                    lbl_DeskontuEgoera.ForeColor = Color.IndianRed;
+                    lbl_DeskontuEgoera.Text = emaitza.Mezua;
+                    return false;
+                }
+
+                var ehunekoa = emaitza.Ehunekoa ?? 0;
+                _deskontuKodea = kodea;
+                _deskontuEhunekoa = ehunekoa;
+
+                var berria = _jatorrizkoGuztira * (1 - (ehunekoa / 100.0));
+                _guztira = Math.Round(berria, 2, MidpointRounding.AwayFromZero);
+                lbl_Guztira.Text = _guztira.ToString("0.00 €");
+
+                if (_eskudiruaAukeratuta)
+                    KalkulatuItzulia();
+
+                lbl_DeskontuEgoera.ForeColor = Color.DarkGreen;
+                lbl_DeskontuEgoera.Text = emaitza.Mezua;
+                return true;
+            }
+            finally
             {
-                Text = "Utzi",
-                DialogResult = DialogResult.Cancel,
-                Left = f.ClientSize.Width - 16 - 100,
-                Top = 92,
-                Width = 90,
-                Height = 34
-            };
-
-            f.Controls.Add(lbl);
-            f.Controls.Add(txt);
-            f.Controls.Add(btnOk);
-            f.Controls.Add(btnCancel);
-            f.AcceptButton = btnOk;
-            f.CancelButton = btnCancel;
-
-            var result = f.ShowDialog();
-            return result == DialogResult.OK ? txt.Text : null;
+                _deskontuaAplikatzen = false;
+                btn_DeskontuaAplikatu.Enabled = true;
+            }
         }
     }
 }

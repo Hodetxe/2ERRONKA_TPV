@@ -45,6 +45,10 @@ namespace TeknoBideTPV.UI
             lbl_OrdainketaMetodoa = new Label();
             lbl_Guztira = new Label();
             lbl_GuztiraIzenburua = new Label();
+            lbl_DeskontuaIzenburua = new Label();
+            txt_DeskontuKodea = new TextBox();
+            btn_DeskontuaAplikatu = new Button();
+            lbl_DeskontuEgoera = new Label();
             pnl_Eskariak.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgv_Eskariak).BeginInit();
             pnl_Ordainketa.SuspendLayout();
@@ -107,6 +111,10 @@ namespace TeknoBideTPV.UI
             pnl_Ordainketa.Controls.Add(lbl_OrdainketaMetodoa);
             pnl_Ordainketa.Controls.Add(lbl_Guztira);
             pnl_Ordainketa.Controls.Add(lbl_GuztiraIzenburua);
+            pnl_Ordainketa.Controls.Add(lbl_DeskontuaIzenburua);
+            pnl_Ordainketa.Controls.Add(txt_DeskontuKodea);
+            pnl_Ordainketa.Controls.Add(btn_DeskontuaAplikatu);
+            pnl_Ordainketa.Controls.Add(lbl_DeskontuEgoera);
             pnl_Ordainketa.Location = new Point(1180, 180);
             pnl_Ordainketa.Name = "pnl_Ordainketa";
             pnl_Ordainketa.Size = new Size(650, 700);
@@ -235,6 +243,31 @@ namespace TeknoBideTPV.UI
             lbl_GuztiraIzenburua.Size = new Size(182, 50);
             lbl_GuztiraIzenburua.TabIndex = 0;
             lbl_GuztiraIzenburua.Text = "GUZTIRA";
+            lbl_DeskontuaIzenburua.AutoSize = true;
+            lbl_DeskontuaIzenburua.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbl_DeskontuaIzenburua.Location = new Point(0, 230);
+            lbl_DeskontuaIzenburua.Name = "lbl_DeskontuaIzenburua";
+            lbl_DeskontuaIzenburua.Size = new Size(215, 41);
+            lbl_DeskontuaIzenburua.TabIndex = 12;
+            lbl_DeskontuaIzenburua.Text = "Deskontu-kodea";
+            txt_DeskontuKodea.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txt_DeskontuKodea.Location = new Point(0, 280);
+            txt_DeskontuKodea.Name = "txt_DeskontuKodea";
+            txt_DeskontuKodea.Size = new Size(400, 43);
+            txt_DeskontuKodea.TabIndex = 13;
+            btn_DeskontuaAplikatu.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btn_DeskontuaAplikatu.Location = new Point(420, 276);
+            btn_DeskontuaAplikatu.Name = "btn_DeskontuaAplikatu";
+            btn_DeskontuaAplikatu.Size = new Size(210, 52);
+            btn_DeskontuaAplikatu.TabIndex = 14;
+            btn_DeskontuaAplikatu.Text = "APLIKATU";
+            btn_DeskontuaAplikatu.UseVisualStyleBackColor = true;
+            lbl_DeskontuEgoera.AutoSize = true;
+            lbl_DeskontuEgoera.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbl_DeskontuEgoera.Location = new Point(0, 330);
+            lbl_DeskontuEgoera.Name = "lbl_DeskontuEgoera";
+            lbl_DeskontuEgoera.Size = new Size(0, 28);
+            lbl_DeskontuEgoera.TabIndex = 15;
             // 
             // ErreserbaAmaituForm
             // 
@@ -276,5 +309,9 @@ namespace TeknoBideTPV.UI
         private Button btn_Ordaindu;
         private ComboBox cmb_Erreserbak;
         private Label lbl_ErreserbaAukeratu;
+        private Label lbl_DeskontuaIzenburua;
+        private TextBox txt_DeskontuKodea;
+        private Button btn_DeskontuaAplikatu;
+        private Label lbl_DeskontuEgoera;
     }
 }
