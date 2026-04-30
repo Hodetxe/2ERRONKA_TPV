@@ -124,12 +124,8 @@ namespace TeknoBideTPV.UI
         {
             int gap = 40;
             int margin = 40;
-
-            // Calcular espacio vertical disponible entre Header y Footer
             int topPos = margin;
             int bottomLimit = this.ClientSize.Height - margin;
-
-            // Intentar obtener límites de header y footer si existen
             if (headerControl_ErreserbaAmaitu != null)
                 topPos = headerControl_ErreserbaAmaitu.Bottom + 10; // Pequeño margen extra
             
@@ -143,7 +139,6 @@ namespace TeknoBideTPV.UI
 
             if (totalAvailableWidth > 0)
             {
-                // Aumentamos el panel de pago al 50%
                 int eskariakWidth = (int)(totalAvailableWidth * 0.50);
                 int ordainketaWidth = totalAvailableWidth - eskariakWidth;
 
@@ -159,12 +154,8 @@ namespace TeknoBideTPV.UI
                 pnl_Ordainketa.Top = topPos;
                 pnl_Ordainketa.Width = ordainketaWidth;
                 pnl_Ordainketa.Height = availableHeight; 
-
-                // Ajustar controles dentro de pnl_Ordainketa
                 AjustarKontrolakOrdainketa(ordainketaWidth, pnl_Ordainketa.Height);
             }
-
-            // Ajustar label Guztira (existente)
             int margenLbl = 20;
             lbl_Guztira.AutoSize = false;
             int availableLbl = pnl_Ordainketa.ClientSize.Width - lbl_Guztira.Left - margenLbl;
@@ -178,8 +169,6 @@ namespace TeknoBideTPV.UI
         {
             int innerMargin = 8;
             int fullWidth = panelWidth - (2 * innerMargin);
-
-            // Reducir alturas para asegurar que caben en 700px y permitir mayor separación
             int btnHeight = 70;      
             int btnPayHeight = 80;   
             int lblTotalHeight = 60; 
@@ -239,80 +228,53 @@ namespace TeknoBideTPV.UI
                 btn_Ordaindu.Width = ordainduWidth;
                 btn_Ordaindu.Left = innerMargin + ((fullWidth - ordainduWidth) / 2);
             }
-
-            // Distribución Vertical
-            // Definimos grupos de controles y su altura aproximada
-            // Grupo 1: Seleccion
             int h1 = lbl_ErreserbaAukeratu.Height + cmb_Erreserbak.Height;
-            // Grupo 2: Total
             int h2 = lbl_GuztiraIzenburua.Height + lbl_Guztira.Height;
-            // Grupo 3: Deskontua
             int h3 = lbl_DeskontuaIzenburua.Height + txt_DeskontuKodea.Height + lbl_DeskontuEgoera.Height;
-            // Grupo 4: Metodo
             int h4 = lbl_OrdainketaMetodoa.Height + btn_Eskudirua.Height;
-            // Grupo 5: Recibido
             int h5 = lbl_JasoDenDirua.Height + txt_JasoDenDirua.Height;
-            // Grupo 6: Vuelta
             int h6 = lbl_ItzuliIzenburua.Height + lbl_Itzulia.Height;
-            // Grupo 7: Boton Pagar
             int h7 = btn_Ordaindu.Height;
 
             int totalContentHeight = h1 + h2 + h3 + h4 + h5 + h6 + h7;
             int availableSpace = panelHeight - totalContentHeight;
             
             int gapCount = 6;
-            // Permitir que el gap sea pequeño si hace falta, pero intentar mantener al menos 4px
             int gapSize = 6;
             
             if (availableSpace > 0)
             {
                 gapSize = availableSpace / (gapCount + 2);
-                // Limitar el gap máximo para que no queden muy separados si sobra mucho espacio
                 if (gapSize > 20) gapSize = 20; 
                 if (gapSize < 4) gapSize = 4;
             }
             else
             {
-                // Si no hay espacio, usar un gap mínimo y permitir desbordamiento o scroll (si lo hubiera)
                 gapSize = 2;
             }
 
             int currentY = gapSize;
-
-            // Grupo 1
             lbl_ErreserbaAukeratu.Top = currentY;
             cmb_Erreserbak.Top = lbl_ErreserbaAukeratu.Bottom; 
             currentY = cmb_Erreserbak.Bottom + gapSize;
-
-            // Grupo 2
             lbl_GuztiraIzenburua.Top = currentY;
             lbl_Guztira.Top = lbl_GuztiraIzenburua.Bottom;
             currentY = lbl_Guztira.Bottom + gapSize;
-
-            // Grupo 3
             lbl_DeskontuaIzenburua.Top = currentY;
             txt_DeskontuKodea.Top = lbl_DeskontuaIzenburua.Bottom;
             btn_DeskontuaAplikatu.Top = txt_DeskontuKodea.Top - 2;
             lbl_DeskontuEgoera.Top = txt_DeskontuKodea.Bottom + 2;
             currentY = lbl_DeskontuEgoera.Bottom + gapSize;
-
-            // Grupo 4
             lbl_OrdainketaMetodoa.Top = currentY;
             btn_Eskudirua.Top = lbl_OrdainketaMetodoa.Bottom;
             btn_Txartela.Top = btn_Eskudirua.Top;
             currentY = btn_Eskudirua.Bottom + gapSize;
-
-            // Grupo 5
             lbl_JasoDenDirua.Top = currentY;
             txt_JasoDenDirua.Top = lbl_JasoDenDirua.Bottom;
             currentY = txt_JasoDenDirua.Bottom + gapSize;
-
-            // Grupo 6
             lbl_ItzuliIzenburua.Top = currentY;
             lbl_Itzulia.Top = lbl_ItzuliIzenburua.Bottom;
             currentY = lbl_Itzulia.Bottom + gapSize;
-
-            // Grupo 7
             btn_Ordaindu.Top = currentY;
         }
 
@@ -601,10 +563,10 @@ namespace TeknoBideTPV.UI
 
             if (_deskontuKodea != null &&
                 string.Equals(_deskontuKodea, kodea, StringComparison.OrdinalIgnoreCase) &&
-                _deskontuEhunekoa.HasValue)
+                (_deskontuEhunekoa.HasValue || _guztira != _jatorrizkoGuztira))
             {
                 lbl_DeskontuEgoera.ForeColor = Color.DarkGreen;
-                lbl_DeskontuEgoera.Text = $"Deskontua aplikatuta: -{_deskontuEhunekoa:0.##}%";
+                lbl_DeskontuEgoera.Text = "Deskontua aplikatuta.";
                 return true;
             }
 
@@ -615,7 +577,7 @@ namespace TeknoBideTPV.UI
                 lbl_DeskontuEgoera.ForeColor = TPVEstiloa.Koloreak.TextTitle;
                 lbl_DeskontuEgoera.Text = "Balidatzen...";
 
-                var emaitza = await _odoo.BalidatuDeskontuKodeaAsync(kodea);
+                var emaitza = await _odoo.KalkulatuDeskontuaAsync(kodea, _jatorrizkoGuztira);
                 if (!emaitza.Ok)
                 {
                     _deskontuKodea = null;
@@ -631,12 +593,10 @@ namespace TeknoBideTPV.UI
                     return false;
                 }
 
-                var ehunekoa = emaitza.Ehunekoa ?? 0;
                 _deskontuKodea = kodea;
-                _deskontuEhunekoa = ehunekoa;
+                _deskontuEhunekoa = emaitza.Mota == "ehunekoa" ? emaitza.Balioa : null;
 
-                var berria = _jatorrizkoGuztira * (1 - (ehunekoa / 100.0));
-                _guztira = Math.Round(berria, 2, MidpointRounding.AwayFromZero);
+                _guztira = Math.Round(emaitza.Guztira, 2, MidpointRounding.AwayFromZero);
                 lbl_Guztira.Text = _guztira.ToString("0.00 €");
 
                 if (_eskudiruaAukeratuta)

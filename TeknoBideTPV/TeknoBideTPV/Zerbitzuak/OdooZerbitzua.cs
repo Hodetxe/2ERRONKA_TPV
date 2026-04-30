@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,16 +16,62 @@ namespace TeknoBideTPV.Zerbitzuak
 
         public OdooZerbitzua(string? baseUrl = null, string? token = null)
         {
+            var envBaseUrl = Environment.GetEnvironmentVariable("TPV_ODOO_BASE_URL");
+            var ezarpenak = TpvEzarpenakZerbitzua.Kargatu();
             _baseUrl = string.IsNullOrWhiteSpace(baseUrl)
-                ? Environment.GetEnvironmentVariable("TPV_ODOO_BASE_URL")
+                ? (
+                    !string.IsNullOrWhiteSpace(envBaseUrl)
+                        ? envBaseUrl
+                        : (!string.IsNullOrWhiteSpace(ezarpenak.OdooBaseUrl) ? ezarpenak.OdooBaseUrl : "http://localhost:8069")
+                  )
                 : baseUrl;
 
+            var envToken = Environment.GetEnvironmentVariable("TPV_ODOO_TOKEN");
             _token = string.IsNullOrWhiteSpace(token)
-                ? Environment.GetEnvironmentVariable("TPV_ODOO_TOKEN")
+                ? (!string.IsNullOrWhiteSpace(envToken) ? envToken : ezarpenak.OdooToken)
                 : token;
         }
 
         public bool KonfiguratutaDago => !string.IsNullOrWhiteSpace(_baseUrl);
+
+        public async Task<OdooDeskontuKalkuluEmaitza> KalkulatuDeskontuaAsync(string kodea, double guztiraBruto)
+        {
+            kodea = (kodea ?? string.Empty).Trim();
+            if (kodea.Length == 0)
+                return OdooDeskontuKalkuluEmaitza.Baliogabea("Kodea hutsik dago.");
+
+            if (guztiraBruto < 0)
+                return OdooDeskontuKalkuluEmaitza.Baliogabea("Guztira ez da baliozkoa.");
+
+            if (!KonfiguratutaDago)
+                return OdooDeskontuKalkuluEmaitza.KonfiguratuGabea("Odoo ez dago konfiguratuta (TPV_ODOO_BASE_URL).");
+
+            try
+            {
+                using var cts = new CancellationTokenSource(3500);
+                var baseUrl = _baseUrl!.TrimEnd('/');
+
+                var url = $"{baseUrl}/api/jatetxeko/deskontuak/kalkulatu";
+                using var req = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = JsonContent.Create(new { kodea, guztira_bruto = guztiraBruto })
+                };
+
+                if (!string.IsNullOrWhiteSpace(_token))
+                    req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+
+                using var resp = await _http.SendAsync(req, cts.Token);
+                var body = await resp.Content.ReadAsStringAsync(cts.Token);
+                if (!resp.IsSuccessStatusCode)
+                    return OdooDeskontuKalkuluEmaitza.Baliogabea($"Odoo errorea: {(int)resp.StatusCode}");
+
+                return ParseatuKalkulua(body, kodea, guztiraBruto);
+            }
+            catch (Exception ex)
+            {
+                return OdooDeskontuKalkuluEmaitza.Errorea($"Errorea Odoo-ra konektatzean: {ex.Message}");
+            }
+        }
 
         public async Task<OdooDeskontuEmaitza> BalidatuDeskontuKodeaAsync(string kodea)
         {
@@ -104,6 +151,50 @@ namespace TeknoBideTPV.Zerbitzuak
 
             return OdooDeskontuEmaitza.Baliogabea("Odoo erantzuna ez da ulertu.");
         }
+
+        private static OdooDeskontuKalkuluEmaitza ParseatuKalkulua(string body, string kodea, double guztiraBruto)
+        {
+            if (string.IsNullOrWhiteSpace(body))
+                return OdooDeskontuKalkuluEmaitza.Baliogabea("Erantzuna hutsik dago.");
+
+            try
+            {
+                using var doc = JsonDocument.Parse(body);
+                var root = doc.RootElement;
+                if (root.ValueKind != JsonValueKind.Object)
+                    return OdooDeskontuKalkuluEmaitza.Baliogabea("Odoo erantzuna ez da ulertu.");
+
+                if (root.TryGetProperty("existitzen_da", out var existitzenDaEl) &&
+                    existitzenDaEl.ValueKind == JsonValueKind.False)
+                {
+                    return OdooDeskontuKalkuluEmaitza.Baliogabea("Kodea ez da existitzen edo ez dago aktibo.");
+                }
+
+                var mota = root.TryGetProperty("mota", out var motaEl) ? motaEl.GetString() ?? string.Empty : string.Empty;
+                var balioa = root.TryGetProperty("balioa", out var balioaEl) && balioaEl.TryGetDouble(out var b) ? b : 0.0;
+                var deskontuKopurua = root.TryGetProperty("deskontu_kopurua", out var deskEl) && deskEl.TryGetDouble(out var d) ? d : 0.0;
+                var guztira = root.TryGetProperty("guztira", out var guztiraEl) && guztiraEl.TryGetDouble(out var g) ? g : guztiraBruto;
+                var bruto = root.TryGetProperty("guztira_bruto", out var brutoEl) && brutoEl.TryGetDouble(out var gb) ? gb : guztiraBruto;
+                var kodeaErantzuna = root.TryGetProperty("kodea", out var kodeaEl) ? (kodeaEl.GetString() ?? kodea) : kodea;
+
+                // Defensive clamp to avoid negative totals due to external rounding issues.
+                if (deskontuKopurua < 0) deskontuKopurua = 0;
+                if (guztira < 0) guztira = 0;
+                if (deskontuKopurua > bruto) deskontuKopurua = bruto;
+
+                return OdooDeskontuKalkuluEmaitza.Ona(
+                    kodeaErantzuna,
+                    mota,
+                    balioa,
+                    bruto,
+                    deskontuKopurua,
+                    guztira);
+            }
+            catch
+            {
+                return OdooDeskontuKalkuluEmaitza.Baliogabea("Odoo erantzuna ez da ulertu.");
+            }
+        }
     }
 
     public class OdooDeskontuEmaitza
@@ -134,6 +225,54 @@ namespace TeknoBideTPV.Zerbitzuak
 
         public static OdooDeskontuEmaitza Errorea(string mezua) =>
             new OdooDeskontuEmaitza { Ok = false, KonfiguratuGabe = false, Mezua = mezua };
+    }
+
+    public class OdooDeskontuKalkuluEmaitza
+    {
+        public bool Ok { get; private set; }
+        public bool KonfiguratuGabe { get; private set; }
+        public string Mezua { get; private set; } = string.Empty;
+        public string Kodea { get; private set; } = string.Empty;
+        public string Mota { get; private set; } = string.Empty;
+        public double Balioa { get; private set; }
+        public double GuztiraBruto { get; private set; }
+        public double DeskontuKopurua { get; private set; }
+        public double Guztira { get; private set; }
+
+        public static OdooDeskontuKalkuluEmaitza Ona(
+            string kodea,
+            string mota,
+            double balioa,
+            double guztiraBruto,
+            double deskontuKopurua,
+            double guztira)
+        {
+            var motaNorm = (mota ?? string.Empty).Trim().ToLowerInvariant();
+            var mezua = motaNorm == "ehunekoa"
+                ? $"Deskontua aplikatuta: -{balioa:0.##}%"
+                : $"Deskontua aplikatuta: -{deskontuKopurua:0.00}€";
+
+            return new OdooDeskontuKalkuluEmaitza
+            {
+                Ok = true,
+                Kodea = kodea ?? string.Empty,
+                Mota = motaNorm,
+                Balioa = balioa,
+                GuztiraBruto = guztiraBruto,
+                DeskontuKopurua = deskontuKopurua,
+                Guztira = guztira,
+                Mezua = mezua
+            };
+        }
+
+        public static OdooDeskontuKalkuluEmaitza Baliogabea(string mezua) =>
+            new OdooDeskontuKalkuluEmaitza { Ok = false, KonfiguratuGabe = false, Mezua = mezua };
+
+        public static OdooDeskontuKalkuluEmaitza KonfiguratuGabea(string mezua) =>
+            new OdooDeskontuKalkuluEmaitza { Ok = false, KonfiguratuGabe = true, Mezua = mezua };
+
+        public static OdooDeskontuKalkuluEmaitza Errorea(string mezua) =>
+            new OdooDeskontuKalkuluEmaitza { Ok = false, KonfiguratuGabe = false, Mezua = mezua };
     }
 }
 

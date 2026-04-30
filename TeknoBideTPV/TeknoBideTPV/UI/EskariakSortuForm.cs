@@ -483,10 +483,16 @@ namespace TeknoBideTPV.UI
                 return;
             }
 
+            var guztira = produktuakEskarian.Sum(p => p.Prezioa);
             var eskaria = new EskariaSortuDto
             {
                 ErreserbaId = ((ErreserbaDto)cbo_Erreserba.SelectedItem).Id,
-                Prezioa = double.Parse(txt_PrezioTotala.Text),
+                Prezioa = guztira,
+                GuztiraBruto = guztira,
+                DeskontuKopurua = 0,
+                DeskontuKodea = null,
+                DeskontuMota = null,
+                DeskontuBalioa = null,
                 Egoera = _eskariaEditatzeko != null ? _eskariaEditatzeko.Egoera : "Bidalita",
                 Produktuak = produktuakEskarian
             };
@@ -534,10 +540,8 @@ namespace TeknoBideTPV.UI
                     MessageBox.Show(sb.ToString(), "Eskaria sortuta", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     
                     produktuakEskarian.Clear();
-                    if (produktuakEskarian.Count > 0)
-                        EskariakGridEguneratu();
-                    else
-                        dgv_EskariaProduktua.DataSource = null;
+                    dgv_EskariaProduktua.DataSource = null;
+                    EskariakGridEguneratu();
 
                     await ProduktuakBerrituAsync();
                     EguneratuBotoiak();

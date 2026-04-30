@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +10,11 @@ namespace TeknoBideTPV.DTOak
     {
         public int Id { get; set; }
         public double Prezioa { get; set; }
+        public double GuztiraBruto { get; set; }
+        public double DeskontuKopurua { get; set; }
+        public string? DeskontuKodea { get; set; }
+        public string? DeskontuMota { get; set; }
+        public double? DeskontuBalioa { get; set; }
         public string Egoera { get; set; }
 
         public int ErreserbaId { get; set; }

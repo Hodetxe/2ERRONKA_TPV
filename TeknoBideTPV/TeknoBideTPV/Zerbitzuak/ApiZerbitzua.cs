@@ -31,7 +31,6 @@ namespace TeknoBideTPV.Zerbitzuak
                     var erantzuna = await response.Content.ReadFromJsonAsync<LoginErantzunaDto>();
                     if (erantzuna != null)
                     {
-                        // Si el API devuelve un DTO, incluso con error, lo usamos
                         if (!response.IsSuccessStatusCode && string.IsNullOrEmpty(erantzuna.Message))
                         {
                             erantzuna.Message = $"Zerbitzariaren errorea: {(int)response.StatusCode}";
@@ -53,7 +52,6 @@ namespace TeknoBideTPV.Zerbitzuak
             }
             catch (HttpRequestException)
             {
-                // Error de conexión (API caída, etc.)
                 return new LoginErantzunaDto { Ok = false, Message = $"Ezin izan da API-arekin konektatu ({BASE_URL}). Ziurtatu API-a martxan dagoela." };
             }
             catch (Exception ex)

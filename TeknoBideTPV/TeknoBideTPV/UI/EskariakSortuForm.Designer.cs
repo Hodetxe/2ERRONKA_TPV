@@ -76,6 +76,7 @@ namespace TeknoBideTPV.UI
             txt_PrezioTotala.Name = "txt_PrezioTotala";
             txt_PrezioTotala.Size = new Size(125, 38);
             txt_PrezioTotala.TabIndex = 4;
+            txt_PrezioTotala.ReadOnly = true;
             // 
             // cbo_Erreserba
             // 

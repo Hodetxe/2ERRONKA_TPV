@@ -21,6 +21,11 @@ namespace TeknoBideTPV.UI
         private readonly DataGridView _dgv = new DataGridView();
         private readonly Button _btnGorde = new Button();
         private readonly Button _btnBerritu = new Button();
+        private readonly TextBox _txtOdooUrl = new TextBox();
+        private readonly TextBox _txtOdooToken = new TextBox();
+        private readonly Button _btnEzarpenakGorde = new Button();
+        private readonly Label _lblOdooUrl = new Label();
+        private readonly Label _lblOdooToken = new Label();
 
         private List<ProduktuaDto> _produktuak = new List<ProduktuaDto>();
         private readonly Dictionary<int, int> _stockHasierakoa = new Dictionary<int, int>();
@@ -32,6 +37,9 @@ namespace TeknoBideTPV.UI
             this.ControlBox = false;
             this.Text = "";
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.WindowState = FormWindowState.Maximized;
+            this.MinimumSize = new Size(1200, 700);
 
             this.BackColor = TPVEstiloa.Koloreak.Background;
             this.Load += InbentarioaForm_Load;
@@ -115,13 +123,56 @@ namespace TeknoBideTPV.UI
             var pnlGoikoEkintzak = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 74,
+                Height = 150,
                 BackColor = TPVEstiloa.Koloreak.Background,
                 Padding = new Padding(16, 10, 16, 10)
             };
 
+            _lblOdooUrl.Text = "Odoo URL";
+            _lblOdooUrl.AutoSize = true;
+            _lblOdooUrl.ForeColor = TPVEstiloa.Koloreak.TextTitle;
+            _lblOdooUrl.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            _lblOdooUrl.Left = 16;
+            _lblOdooUrl.Top = 10;
+
+            _txtOdooUrl.Width = 520;
+            _txtOdooUrl.Height = 34;
+            _txtOdooUrl.Left = 16;
+            _txtOdooUrl.Top = _lblOdooUrl.Bottom + 6;
+            _txtOdooUrl.BackColor = Color.White;
+
+            _lblOdooToken.Text = "Odoo Token";
+            _lblOdooToken.AutoSize = true;
+            _lblOdooToken.ForeColor = TPVEstiloa.Koloreak.TextTitle;
+            _lblOdooToken.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            _lblOdooToken.Left = _txtOdooUrl.Right + 18;
+            _lblOdooToken.Top = 10;
+
+            _txtOdooToken.Width = 420;
+            _txtOdooToken.Height = 34;
+            _txtOdooToken.Left = _lblOdooToken.Left;
+            _txtOdooToken.Top = _lblOdooToken.Bottom + 6;
+            _txtOdooToken.BackColor = Color.White;
+            _txtOdooToken.UseSystemPasswordChar = true;
+
+            _btnEzarpenakGorde.Text = "ODOO GORDE";
+            _btnEzarpenakGorde.BackColor = TPVEstiloa.Koloreak.Primary;
+            _btnEzarpenakGorde.ForeColor = TPVEstiloa.Koloreak.White;
+            _btnEzarpenakGorde.FlatStyle = FlatStyle.Flat;
+            _btnEzarpenakGorde.FlatAppearance.BorderSize = 0;
+            _btnEzarpenakGorde.Width = 220;
+            _btnEzarpenakGorde.Height = 54;
+            _btnEzarpenakGorde.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _btnEzarpenakGorde.Top = _txtOdooUrl.Bottom + 16;
+            _btnEzarpenakGorde.Click += (_, __) => GordeOdooEzarpenak();
+
             pnlGoikoEkintzak.Controls.Add(_btnGorde);
             pnlGoikoEkintzak.Controls.Add(_btnBerritu);
+            pnlGoikoEkintzak.Controls.Add(_lblOdooUrl);
+            pnlGoikoEkintzak.Controls.Add(_txtOdooUrl);
+            pnlGoikoEkintzak.Controls.Add(_lblOdooToken);
+            pnlGoikoEkintzak.Controls.Add(_txtOdooToken);
+            pnlGoikoEkintzak.Controls.Add(_btnEzarpenakGorde);
 
             this.Controls.Add(_dgv);
             this.Controls.Add(pnlGoikoEkintzak);
@@ -140,6 +191,7 @@ namespace TeknoBideTPV.UI
             TPVEstiloa.EstilatuDataGridView(_dgv);
             TPVEstiloa.ProfesionalizatuKontrolak(this);
             KokatuBotoiak();
+            KargatuOdooEzarpenak();
             await KargatuProduktuakAsync();
         }
 
@@ -157,6 +209,61 @@ namespace TeknoBideTPV.UI
 
             _btnBerritu.Left = _btnGorde.Left - 12 - _btnBerritu.Width;
             _btnBerritu.Top = 10;
+
+            _btnEzarpenakGorde.Left = right - _btnEzarpenakGorde.Width;
+            _btnEzarpenakGorde.Top = 78;
+
+            var maxWidth = Math.Max(300, _btnBerritu.Left - 32);
+            _txtOdooUrl.Width = Math.Min(520, maxWidth);
+            _txtOdooToken.Left = _txtOdooUrl.Right + 18;
+            _lblOdooToken.Left = _txtOdooToken.Left;
+
+            var tokenMax = Math.Max(220, _btnEzarpenakGorde.Left - _txtOdooToken.Left - 16);
+            _txtOdooToken.Width = Math.Min(520, tokenMax);
+        }
+
+        private void KargatuOdooEzarpenak()
+        {
+            var ezarpenak = TpvEzarpenakZerbitzua.Kargatu();
+            _txtOdooUrl.Text = string.IsNullOrWhiteSpace(ezarpenak.OdooBaseUrl) ? "http://localhost:8069" : ezarpenak.OdooBaseUrl;
+            _txtOdooToken.Text = ezarpenak.OdooToken ?? string.Empty;
+        }
+
+        private void GordeOdooEzarpenak()
+        {
+            var url = (_txtOdooUrl.Text ?? string.Empty).Trim().TrimEnd('/');
+            var token = (_txtOdooToken.Text ?? string.Empty).Trim();
+
+            if (url.Length == 0)
+            {
+                MessageBox.Show("Sartu Odoo URL bat (adib.: http://localhost:8069).", "Ezarpenak",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || (uri.Scheme != "http" && uri.Scheme != "https"))
+            {
+                MessageBox.Show("Odoo URL ez da zuzena. Adib.: http://localhost:8069", "Ezarpenak",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var ezarpenak = new TpvEzarpenak
+            {
+                OdooBaseUrl = url,
+                OdooToken = token.Length == 0 ? null : token
+            };
+
+            var ok = TpvEzarpenakZerbitzua.Gorde(ezarpenak);
+            if (!ok)
+            {
+                MessageBox.Show("Ezin izan da ezarpenak gorde.", "Ezarpenak",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show("Odoo ezarpenak gorde dira. Itxi eta berriz ireki pantaila deskontuak probatzeko.", "Ezarpenak",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private async Task KargatuProduktuakAsync()
