@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TeknoBideTPV")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e2fb2f569f5212cd7dd65ed8d43d0283e77c8bfb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9fd390cb61cab98227e07a3ad15d1d593f0ed310")]
 [assembly: System.Reflection.AssemblyProductAttribute("TeknoBideTPV")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TeknoBideTPV")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
