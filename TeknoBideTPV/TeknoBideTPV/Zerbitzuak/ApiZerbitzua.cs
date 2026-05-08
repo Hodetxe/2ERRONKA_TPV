@@ -10,7 +10,7 @@ namespace TeknoBideTPV.Zerbitzuak
     public class ApiZerbitzua
     {
         //public static readonly string BASE_URL = "http://192.168.1.112:5000/";
-        public static readonly string BASE_URL = "http://localhost:5000/";
+        public static readonly string BASE_URL = "http://192.168.10.5:5000/";
 
         private static readonly HttpClient _httpClient = new HttpClient
         {

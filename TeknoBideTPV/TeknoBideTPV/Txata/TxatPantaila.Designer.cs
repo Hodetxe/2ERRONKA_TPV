@@ -20,6 +20,7 @@
         private void InitializeComponent()
         {
             BidaliBotoia = new Button();
+            FitxategiaBotoia = new Button();
             MezuIdazlea = new TextBox();
             MezuPantaila = new RichTextBox();
             SuspendLayout();
@@ -33,11 +34,20 @@
             BidaliBotoia.UseVisualStyleBackColor = false;
             BidaliBotoia.Click += BidaliBotoia_Click;
 
+            FitxategiaBotoia.BackColor = Color.FromArgb(255, 243, 224);
+            FitxategiaBotoia.Location = new Point(350, 539);
+            FitxategiaBotoia.Name = "FitxategiaBotoia";
+            FitxategiaBotoia.Size = new Size(111, 50);
+            FitxategiaBotoia.TabIndex = 3;
+            FitxategiaBotoia.Text = "Fitxategia";
+            FitxategiaBotoia.UseVisualStyleBackColor = false;
+            FitxategiaBotoia.Click += FitxategiaBotoia_Click;
+
             MezuIdazlea.BackColor = Color.FromArgb(255, 243, 224);
             MezuIdazlea.Location = new Point(16, 539);
             MezuIdazlea.Multiline = true;
             MezuIdazlea.Name = "MezuIdazlea";
-            MezuIdazlea.Size = new Size(445, 50);
+            MezuIdazlea.Size = new Size(325, 50);
             MezuIdazlea.TabIndex = 1;
            
 
@@ -48,6 +58,7 @@
             MezuPantaila.Size = new Size(565, 505);
             MezuPantaila.TabIndex = 2;
             MezuPantaila.Text = "";
+            MezuPantaila.DoubleClick += MezuPantaila_DoubleClick;
             MezuPantaila.TextChanged += MezuPantaila_TextChanged;
            
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -55,6 +66,7 @@
             BackColor = Color.FromArgb(255, 204, 188);
             Controls.Add(MezuPantaila);
             Controls.Add(MezuIdazlea);
+            Controls.Add(FitxategiaBotoia);
             Controls.Add(BidaliBotoia);
             Name = "TxatPantaila";
             Size = new Size(600, 600);
@@ -66,6 +78,7 @@
         #endregion
 
         private Button BidaliBotoia;
+        private Button FitxategiaBotoia;
         private TextBox MezuIdazlea;
         private RichTextBox MezuPantaila;
     }

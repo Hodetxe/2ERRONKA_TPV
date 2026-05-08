@@ -225,7 +225,7 @@ namespace TeknoBideTPV.UI
         private void KargatuOdooEzarpenak()
         {
             var ezarpenak = TpvEzarpenakZerbitzua.Kargatu();
-            _txtOdooUrl.Text = string.IsNullOrWhiteSpace(ezarpenak.OdooBaseUrl) ? "http://localhost:8069" : ezarpenak.OdooBaseUrl;
+            _txtOdooUrl.Text = string.IsNullOrWhiteSpace(ezarpenak.OdooBaseUrl) ? "http://192.168.10.5:8069" : ezarpenak.OdooBaseUrl;
             _txtOdooToken.Text = ezarpenak.OdooToken ?? string.Empty;
         }
 
@@ -236,14 +236,14 @@ namespace TeknoBideTPV.UI
 
             if (url.Length == 0)
             {
-                MessageBox.Show("Sartu Odoo URL bat (adib.: http://localhost:8069).", "Ezarpenak",
+                MessageBox.Show("Sartu Odoo URL bat (adib.: http://192.168.10.5:8069).", "Ezarpenak",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || (uri.Scheme != "http" && uri.Scheme != "https"))
             {
-                MessageBox.Show("Odoo URL ez da zuzena. Adib.: http://localhost:8069", "Ezarpenak",
+                MessageBox.Show("Odoo URL ez da zuzena. Adib.: http://192.168.10.5:8069", "Ezarpenak",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }

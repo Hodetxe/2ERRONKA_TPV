@@ -9,6 +9,7 @@ namespace TeknoBideTPV.Zerbitzuak
 {
     public class OdooZerbitzua
     {
+        private const string DefaultOdooBaseUrl = "http://192.168.10.5:8069";
         private static readonly HttpClient _http = new HttpClient();
 
         private readonly string? _baseUrl;
@@ -18,11 +19,12 @@ namespace TeknoBideTPV.Zerbitzuak
         {
             var envBaseUrl = Environment.GetEnvironmentVariable("TPV_ODOO_BASE_URL");
             var ezarpenak = TpvEzarpenakZerbitzua.Kargatu();
+            var gordetakoBaseUrl = NormalizatuBaseUrl(ezarpenak.OdooBaseUrl);
             _baseUrl = string.IsNullOrWhiteSpace(baseUrl)
                 ? (
                     !string.IsNullOrWhiteSpace(envBaseUrl)
                         ? envBaseUrl
-                        : (!string.IsNullOrWhiteSpace(ezarpenak.OdooBaseUrl) ? ezarpenak.OdooBaseUrl : "http://localhost:8069")
+                        : (!string.IsNullOrWhiteSpace(gordetakoBaseUrl) ? gordetakoBaseUrl : DefaultOdooBaseUrl)
                   )
                 : baseUrl;
 
@@ -30,6 +32,17 @@ namespace TeknoBideTPV.Zerbitzuak
             _token = string.IsNullOrWhiteSpace(token)
                 ? (!string.IsNullOrWhiteSpace(envToken) ? envToken : ezarpenak.OdooToken)
                 : token;
+        }
+
+        private static string? NormalizatuBaseUrl(string? baseUrl)
+        {
+            if (string.IsNullOrWhiteSpace(baseUrl)) return null;
+
+            var normalizatua = baseUrl.Trim().TrimEnd('/');
+            return normalizatua.Equals("http://localhost:8069", StringComparison.OrdinalIgnoreCase) ||
+                   normalizatua.Equals("http://127.0.0.1:8069", StringComparison.OrdinalIgnoreCase)
+                ? null
+                : normalizatua;
         }
 
         public bool KonfiguratutaDago => !string.IsNullOrWhiteSpace(_baseUrl);
