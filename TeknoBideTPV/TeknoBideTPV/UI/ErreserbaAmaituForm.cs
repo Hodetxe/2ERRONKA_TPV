@@ -494,7 +494,11 @@ namespace TeknoBideTPV.UI
 
             if (!ok)
             {
-                MessageBox.Show("Errorea erreserba ordaintzean.", "Errorea",
+                var mezua = string.IsNullOrWhiteSpace(_api.AzkenErrorea)
+                    ? "Errorea erreserba ordaintzean."
+                    : $"Errorea erreserba ordaintzean:\n{_api.AzkenErrorea}";
+
+                MessageBox.Show(mezua, "Errorea",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }

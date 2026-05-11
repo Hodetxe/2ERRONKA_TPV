@@ -130,8 +130,43 @@ namespace TeknoBideTPV.Zerbitzuak
 
         public async Task<bool> OrdainduErreserbaAsync(ErreserbaOrdainduDto dto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/erreserbak/ordaindu", dto);
-            return response.IsSuccessStatusCode;
+            AzkenErrorea = null;
+
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/erreserbak/ordaindu", dto);
+                if (response.IsSuccessStatusCode)
+                    return true;
+
+                try
+                {
+                    var edukia = await response.Content.ReadAsStringAsync();
+                    AzkenErrorea = string.IsNullOrWhiteSpace(edukia)
+                        ? $"Zerbitzariaren errorea: {(int)response.StatusCode}"
+                        : edukia.Trim().Trim('"');
+                }
+                catch
+                {
+                    AzkenErrorea = $"Zerbitzariaren errorea: {(int)response.StatusCode}";
+                }
+
+                return false;
+            }
+            catch (HttpRequestException)
+            {
+                AzkenErrorea = $"Ezin izan da API-arekin konektatu ({BASE_URL}). Ziurtatu API-a martxan dagoela.";
+                return false;
+            }
+            catch (TaskCanceledException)
+            {
+                AzkenErrorea = "API-ak ez du garaiz erantzun.";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                AzkenErrorea = $"Ustekabeko errorea: {ex.Message}";
+                return false;
+            }
         }
 
         public async Task<List<MahaiaDto>> MahaiakLortuAsync()
